@@ -1,0 +1,502 @@
+[
+  {
+    "id": "5gzhxaow5tb",
+    "name": "Workstation 0",
+    "building": "Building 8"
+  },
+  {
+    "id": "6t7hsfqbkd2",
+    "name": "Workstation 1",
+    "building": "Building 8"
+  },
+  {
+    "id": "r5te55dlzvp",
+    "name": "Workstation 2",
+    "building": "Building 0"
+  },
+  {
+    "id": "jc65h2qlxuf",
+    "name": "Workstation 3",
+    "building": "Building 10"
+  },
+  {
+    "id": "xfzlf1ph8j",
+    "name": "Workstation 4",
+    "building": "Building 5"
+  },
+  {
+    "id": "5wegcc6lgko",
+    "name": "Workstation 5",
+    "building": "Building 0"
+  },
+  {
+    "id": "81fdhfxtrbb",
+    "name": "Workstation 6",
+    "building": "Building 7"
+  },
+  {
+    "id": "bukk3l6ogil",
+    "name": "Workstation 7",
+    "building": "Building 9"
+  },
+  {
+    "id": "rl2cw30wkv",
+    "name": "Workstation 8",
+    "building": "Building 4"
+  },
+  {
+    "id": "zcvk2r1sll",
+    "name": "Workstation 9",
+    "building": "Building 4"
+  },
+  {
+    "id": "piyypm40o5",
+    "name": "Workstation 10",
+    "building": "Building 4"
+  },
+  {
+    "id": "fiwji8hb1ou",
+    "name": "Workstation 11",
+    "building": "Building 7"
+  },
+  {
+    "id": "a6rtffc754w",
+    "name": "Workstation 12",
+    "building": "Building 6"
+  },
+  {
+    "id": "63mrfojx0n8",
+    "name": "Workstation 13",
+    "building": "Building 5"
+  },
+  {
+    "id": "p8jyn7hdhz",
+    "name": "Workstation 14",
+    "building": "Building 7"
+  },
+  {
+    "id": "i9obv5v3zuj",
+    "name": "Workstation 15",
+    "building": "Building 6"
+  },
+  {
+    "id": "vi05sz2dqri",
+    "name": "Workstation 16",
+    "building": "Building 4"
+  },
+  {
+    "id": "elailrlcypu",
+    "name": "Workstation 17",
+    "building": "Building 6"
+  },
+  {
+    "id": "p14lnmi6bn",
+    "name": "Workstation 18",
+    "building": "Building 8"
+  },
+  {
+    "id": "bu3av1nh5w",
+    "name": "Workstation 19",
+    "building": "Building 6"
+  },
+  {
+    "id": "e7txosyik7",
+    "name": "Workstation 20",
+    "building": "Building 9"
+  },
+  {
+    "id": "yd4k19j9qok",
+    "name": "Workstation 21",
+    "building": "Building 5"
+  },
+  {
+    "id": "p2mq8uy280p",
+    "name": "Workstation 22",
+    "building": "Building 3"
+  },
+  {
+    "id": "acv5d1kwnv",
+    "name": "Workstation 23",
+    "building": "Building 6"
+  },
+  {
+    "id": "mbjvudvemem",
+    "name": "Workstation 24",
+    "building": "Building 8"
+  },
+  {
+    "id": "pz5y5e19w4b",
+    "name": "Workstation 25",
+    "building": "Building 9"
+  },
+  {
+    "id": "vd2lwqpuol9",
+    "name": "Workstation 26",
+    "building": "Building 3"
+  },
+  {
+    "id": "rnjyhmudzd",
+    "name": "Workstation 27",
+    "building": "Building 5"
+  },
+  {
+    "id": "abvmlfpbrpc",
+    "name": "Workstation 28",
+    "building": "Building 3"
+  },
+  {
+    "id": "nzceii09jqs",
+    "name": "Workstation 29",
+    "building": "Building 2"
+  },
+  {
+    "id": "b8uiqktm8g",
+    "name": "Workstation 30",
+    "building": "Building 7"
+  },
+  {
+    "id": "glbkmk355ab",
+    "name": "Workstation 31",
+    "building": "Building 2"
+  },
+  {
+    "id": "cl4trmysusv",
+    "name": "Workstation 32",
+    "building": "Building 4"
+  },
+  {
+    "id": "vrli6wocjyb",
+    "name": "Workstation 33",
+    "building": "Building 7"
+  },
+  {
+    "id": "z2glpms1dei",
+    "name": "Workstation 34",
+    "building": "Building 7"
+  },
+  {
+    "id": "6rieua8hsfq",
+    "name": "Workstation 35",
+    "building": "Building 5"
+  },
+  {
+    "id": "l4bx825g4eh",
+    "name": "Workstation 36",
+    "building": "Building 0"
+  },
+  {
+    "id": "vz00loe91s",
+    "name": "Workstation 37",
+    "building": "Building 9"
+  },
+  {
+    "id": "ypn0fbg20vi",
+    "name": "Workstation 38",
+    "building": "Building 2"
+  },
+  {
+    "id": "l4ajed5qs2n",
+    "name": "Workstation 39",
+    "building": "Building 1"
+  },
+  {
+    "id": "5jkn9535cpc",
+    "name": "Workstation 40",
+    "building": "Building 9"
+  },
+  {
+    "id": "6e0kt30grb4",
+    "name": "Workstation 41",
+    "building": "Building 6"
+  },
+  {
+    "id": "qt31433btg",
+    "name": "Workstation 42",
+    "building": "Building 3"
+  },
+  {
+    "id": "e89mpoto32i",
+    "name": "Workstation 43",
+    "building": "Building 1"
+  },
+  {
+    "id": "26mwuawjtlu",
+    "name": "Workstation 44",
+    "building": "Building 1"
+  },
+  {
+    "id": "byuftzluhhf",
+    "name": "Workstation 45",
+    "building": "Building 9"
+  },
+  {
+    "id": "3jdx4ugy1qu",
+    "name": "Workstation 46",
+    "building": "Building 7"
+  },
+  {
+    "id": "66avnt58txh",
+    "name": "Workstation 47",
+    "building": "Building 2"
+  },
+  {
+    "id": "zluyq8veox",
+    "name": "Workstation 48",
+    "building": "Building 9"
+  },
+  {
+    "id": "tzhxw2z47ic",
+    "name": "Workstation 49",
+    "building": "Building 8"
+  },
+  {
+    "id": "yt7jn0xiz6",
+    "name": "Workstation 50",
+    "building": "Building 1"
+  },
+  {
+    "id": "jybm2endhx8",
+    "name": "Workstation 51",
+    "building": "Building 4"
+  },
+  {
+    "id": "67lr0ato938",
+    "name": "Workstation 52",
+    "building": "Building 10"
+  },
+  {
+    "id": "4jx4edxng8k",
+    "name": "Workstation 53",
+    "building": "Building 2"
+  },
+  {
+    "id": "bxz3d983ip",
+    "name": "Workstation 54",
+    "building": "Building 4"
+  },
+  {
+    "id": "h87l8j4joqp",
+    "name": "Workstation 55",
+    "building": "Building 5"
+  },
+  {
+    "id": "4koga4dys69",
+    "name": "Workstation 56",
+    "building": "Building 10"
+  },
+  {
+    "id": "pbu6xq54jq",
+    "name": "Workstation 57",
+    "building": "Building 5"
+  },
+  {
+    "id": "i3hrr9emcmm",
+    "name": "Workstation 58",
+    "building": "Building 7"
+  },
+  {
+    "id": "5bm942jaz3k",
+    "name": "Workstation 59",
+    "building": "Building 4"
+  },
+  {
+    "id": "vzfktdxvrph",
+    "name": "Workstation 60",
+    "building": "Building 3"
+  },
+  {
+    "id": "2avjhot18u9",
+    "name": "Workstation 61",
+    "building": "Building 4"
+  },
+  {
+    "id": "ef1gqaw87ks",
+    "name": "Workstation 62",
+    "building": "Building 4"
+  },
+  {
+    "id": "3yiuygtpqcg",
+    "name": "Workstation 63",
+    "building": "Building 3"
+  },
+  {
+    "id": "bhyk49km42h",
+    "name": "Workstation 64",
+    "building": "Building 6"
+  },
+  {
+    "id": "lpylola31hm",
+    "name": "Workstation 65",
+    "building": "Building 3"
+  },
+  {
+    "id": "hzkiasrgv0m",
+    "name": "Workstation 66",
+    "building": "Building 1"
+  },
+  {
+    "id": "vy479lfryc8",
+    "name": "Workstation 67",
+    "building": "Building 4"
+  },
+  {
+    "id": "suxcw2qc19g",
+    "name": "Workstation 68",
+    "building": "Building 7"
+  },
+  {
+    "id": "75h2vam8efp",
+    "name": "Workstation 69",
+    "building": "Building 2"
+  },
+  {
+    "id": "x7a86ak4scq",
+    "name": "Workstation 70",
+    "building": "Building 2"
+  },
+  {
+    "id": "gnhru6fsccg",
+    "name": "Workstation 71",
+    "building": "Building 9"
+  },
+  {
+    "id": "5z95y4delca",
+    "name": "Workstation 72",
+    "building": "Building 6"
+  },
+  {
+    "id": "3r9j1x7ykh9",
+    "name": "Workstation 73",
+    "building": "Building 2"
+  },
+  {
+    "id": "cyxtfotziyi",
+    "name": "Workstation 74",
+    "building": "Building 8"
+  },
+  {
+    "id": "9o6i3vne7eb",
+    "name": "Workstation 75",
+    "building": "Building 2"
+  },
+  {
+    "id": "zekb6cd13rm",
+    "name": "Workstation 76",
+    "building": "Building 3"
+  },
+  {
+    "id": "fr228i7fnbd",
+    "name": "Workstation 77",
+    "building": "Building 6"
+  },
+  {
+    "id": "6cvephm6082",
+    "name": "Workstation 78",
+    "building": "Building 2"
+  },
+  {
+    "id": "6f0y5867ay",
+    "name": "Workstation 79",
+    "building": "Building 4"
+  },
+  {
+    "id": "27dzb4lzteq",
+    "name": "Workstation 80",
+    "building": "Building 9"
+  },
+  {
+    "id": "forsg7tl0kb",
+    "name": "Workstation 81",
+    "building": "Building 7"
+  },
+  {
+    "id": "1s8mo9vf2zy",
+    "name": "Workstation 82",
+    "building": "Building 6"
+  },
+  {
+    "id": "w56x6tdkak",
+    "name": "Workstation 83",
+    "building": "Building 8"
+  },
+  {
+    "id": "bvad9tsu2mt",
+    "name": "Workstation 84",
+    "building": "Building 4"
+  },
+  {
+    "id": "6q3pwjhxj",
+    "name": "Workstation 85",
+    "building": "Building 2"
+  },
+  {
+    "id": "eevmcsk943h",
+    "name": "Workstation 86",
+    "building": "Building 3"
+  },
+  {
+    "id": "h9whiywfl67",
+    "name": "Workstation 87",
+    "building": "Building 7"
+  },
+  {
+    "id": "6giw348ntfq",
+    "name": "Workstation 88",
+    "building": "Building 10"
+  },
+  {
+    "id": "c0muhx2kywa",
+    "name": "Workstation 89",
+    "building": "Building 3"
+  },
+  {
+    "id": "djkndvyyaa",
+    "name": "Workstation 90",
+    "building": "Building 9"
+  },
+  {
+    "id": "726qp7z468w",
+    "name": "Workstation 91",
+    "building": "Building 0"
+  },
+  {
+    "id": "ewfdsafcwul",
+    "name": "Workstation 92",
+    "building": "Building 6"
+  },
+  {
+    "id": "70grzktbphy",
+    "name": "Workstation 93",
+    "building": "Building 4"
+  },
+  {
+    "id": "2onjca5iqdf",
+    "name": "Workstation 94",
+    "building": "Building 0"
+  },
+  {
+    "id": "l8hzztu79ea",
+    "name": "Workstation 95",
+    "building": "Building 8"
+  },
+  {
+    "id": "9p50ya3w6vl",
+    "name": "Workstation 96",
+    "building": "Building 7"
+  },
+  {
+    "id": "xillbktqz7k",
+    "name": "Workstation 97",
+    "building": "Building 9"
+  },
+  {
+    "id": "q2phfyt017t",
+    "name": "Workstation 98",
+    "building": "Building 6"
+  },
+  {
+    "id": "4xpg7dchhsa",
+    "name": "Workstation 99",
+    "building": "Building 6"
+  }
+]

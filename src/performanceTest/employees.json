@@ -1,0 +1,402 @@
+[
+  {
+    "id": "n9v28ckhh",
+    "name": "Employee 0",
+    "address": "Street: Street 434, City: City 194",
+    "careerLevel": 10,
+    "entryDate": "2022-07-27T00:00:00.000Z",
+    "exitDate": "2023-12-09T00:00:00.000Z"
+  },
+  {
+    "id": "s0apxoxsuv8",
+    "name": "Employee 1",
+    "address": "Street: Street 104, City: City 136",
+    "careerLevel": 7,
+    "entryDate": "2023-01-16T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "7dj391tdg74",
+    "name": "Employee 2",
+    "address": "Street: Street 376, City: City 359",
+    "careerLevel": 7,
+    "entryDate": "2022-03-03T00:00:00.000Z",
+    "exitDate": "2023-07-16T00:00:00.000Z"
+  },
+  {
+    "id": "3pvgwu345pg",
+    "name": "Employee 3",
+    "address": "Street: Street 411, City: City 471",
+    "careerLevel": 2,
+    "entryDate": "2022-05-02T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "zazk8w9toer",
+    "name": "Employee 4",
+    "address": "Street: Street 201, City: City 327",
+    "careerLevel": 7,
+    "entryDate": "2022-05-10T00:00:00.000Z",
+    "exitDate": "2023-09-22T00:00:00.000Z"
+  },
+  {
+    "id": "dpjtdkerqs",
+    "name": "Employee 5",
+    "address": "Street: Street 413, City: City 216",
+    "careerLevel": 9,
+    "entryDate": "2023-01-16T00:00:00.000Z",
+    "exitDate": "2024-05-30T00:00:00.000Z"
+  },
+  {
+    "id": "pe2w59kt2m",
+    "name": "Employee 6",
+    "address": "Street: Street 321, City: City 400",
+    "careerLevel": 6,
+    "entryDate": "2022-09-12T00:00:00.000Z",
+    "exitDate": "2024-01-25T00:00:00.000Z"
+  },
+  {
+    "id": "si4swx804hs",
+    "name": "Employee 7",
+    "address": "Street: Street 497, City: City 7",
+    "careerLevel": 5,
+    "entryDate": "2022-07-26T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "u6rhzq8suw",
+    "name": "Employee 8",
+    "address": "Street: Street 59, City: City 123",
+    "careerLevel": 5,
+    "entryDate": "2022-04-23T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "orynkcfe0nm",
+    "name": "Employee 9",
+    "address": "Street: Street 370, City: City 477",
+    "careerLevel": 3,
+    "entryDate": "2022-11-06T00:00:00.000Z",
+    "exitDate": "2024-03-20T00:00:00.000Z"
+  },
+  {
+    "id": "qoni2oizfd",
+    "name": "Employee 10",
+    "address": "Street: Street 272, City: City 201",
+    "careerLevel": 9,
+    "entryDate": "2022-12-13T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "hi9n072wi7g",
+    "name": "Employee 11",
+    "address": "Street: Street 121, City: City 271",
+    "careerLevel": 9,
+    "entryDate": "2022-09-17T00:00:00.000Z",
+    "exitDate": "2024-01-30T00:00:00.000Z"
+  },
+  {
+    "id": "uacyxu90s4",
+    "name": "Employee 12",
+    "address": "Street: Street 62, City: City 235",
+    "careerLevel": 0,
+    "entryDate": "2022-08-23T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "5we8ncyg4m7",
+    "name": "Employee 13",
+    "address": "Street: Street 218, City: City 26",
+    "careerLevel": 5,
+    "entryDate": "2022-10-16T00:00:00.000Z",
+    "exitDate": "2024-02-28T00:00:00.000Z"
+  },
+  {
+    "id": "5c8ckc6fy3g",
+    "name": "Employee 14",
+    "address": "Street: Street 28, City: City 89",
+    "careerLevel": 5,
+    "entryDate": "2023-02-23T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "hr51mu2ufar",
+    "name": "Employee 15",
+    "address": "Street: Street 397, City: City 155",
+    "careerLevel": 9,
+    "entryDate": "2022-08-23T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "ih9t0ga083k",
+    "name": "Employee 16",
+    "address": "Street: Street 280, City: City 410",
+    "careerLevel": 8,
+    "entryDate": "2022-04-17T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "vfc8pwhezvg",
+    "name": "Employee 17",
+    "address": "Street: Street 405, City: City 164",
+    "careerLevel": 1,
+    "entryDate": "2022-10-26T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "bposp8mtdr4",
+    "name": "Employee 18",
+    "address": "Street: Street 239, City: City 66",
+    "careerLevel": 8,
+    "entryDate": "2022-04-25T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "cym5sm3msdl",
+    "name": "Employee 19",
+    "address": "Street: Street 101, City: City 433",
+    "careerLevel": 7,
+    "entryDate": "2022-08-13T00:00:00.000Z",
+    "exitDate": "2023-12-26T00:00:00.000Z"
+  },
+  {
+    "id": "6y16x5neaym",
+    "name": "Employee 20",
+    "address": "Street: Street 204, City: City 360",
+    "careerLevel": 10,
+    "entryDate": "2022-04-21T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "igmap2wrex",
+    "name": "Employee 21",
+    "address": "Street: Street 426, City: City 133",
+    "careerLevel": 10,
+    "entryDate": "2023-02-24T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "s7odfiesjp",
+    "name": "Employee 22",
+    "address": "Street: Street 42, City: City 108",
+    "careerLevel": 1,
+    "entryDate": "2022-09-03T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "5qtrf1n15oh",
+    "name": "Employee 23",
+    "address": "Street: Street 118, City: City 282",
+    "careerLevel": 5,
+    "entryDate": "2022-11-30T00:00:00.000Z",
+    "exitDate": "2024-04-13T00:00:00.000Z"
+  },
+  {
+    "id": "cunk3hzk5eq",
+    "name": "Employee 24",
+    "address": "Street: Street 121, City: City 250",
+    "careerLevel": 3,
+    "entryDate": "2022-06-25T00:00:00.000Z",
+    "exitDate": "2023-11-07T00:00:00.000Z"
+  },
+  {
+    "id": "830zr2cwusv",
+    "name": "Employee 25",
+    "address": "Street: Street 304, City: City 498",
+    "careerLevel": 8,
+    "entryDate": "2022-11-20T00:00:00.000Z",
+    "exitDate": "2024-04-03T00:00:00.000Z"
+  },
+  {
+    "id": "mouihy8ikd",
+    "name": "Employee 26",
+    "address": "Street: Street 285, City: City 288",
+    "careerLevel": 2,
+    "entryDate": "2022-12-01T00:00:00.000Z",
+    "exitDate": "2024-04-14T00:00:00.000Z"
+  },
+  {
+    "id": "ub9rpfh226a",
+    "name": "Employee 27",
+    "address": "Street: Street 453, City: City 362",
+    "careerLevel": 1,
+    "entryDate": "2022-05-22T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "rkfmih91m7i",
+    "name": "Employee 28",
+    "address": "Street: Street 329, City: City 198",
+    "careerLevel": 2,
+    "entryDate": "2022-06-28T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "zgtmhiqyqr",
+    "name": "Employee 29",
+    "address": "Street: Street 64, City: City 98",
+    "careerLevel": 6,
+    "entryDate": "2022-03-11T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "5wmkaitscnl",
+    "name": "Employee 30",
+    "address": "Street: Street 166, City: City 376",
+    "careerLevel": 8,
+    "entryDate": "2022-10-10T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "lro4drrsnv",
+    "name": "Employee 31",
+    "address": "Street: Street 439, City: City 249",
+    "careerLevel": 9,
+    "entryDate": "2022-06-26T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "8sb18ld4u7a",
+    "name": "Employee 32",
+    "address": "Street: Street 113, City: City 211",
+    "careerLevel": 4,
+    "entryDate": "2022-09-03T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "g4jycqxtanh",
+    "name": "Employee 33",
+    "address": "Street: Street 12, City: City 252",
+    "careerLevel": 3,
+    "entryDate": "2022-05-12T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "bihg9b0ayn8",
+    "name": "Employee 34",
+    "address": "Street: Street 80, City: City 126",
+    "careerLevel": 7,
+    "entryDate": "2022-03-22T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "ujrcwmj3ntf",
+    "name": "Employee 35",
+    "address": "Street: Street 175, City: City 316",
+    "careerLevel": 9,
+    "entryDate": "2022-09-22T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "mxcpf6v1qrn",
+    "name": "Employee 36",
+    "address": "Street: Street 127, City: City 217",
+    "careerLevel": 5,
+    "entryDate": "2022-05-27T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "arg0yywiect",
+    "name": "Employee 37",
+    "address": "Street: Street 29, City: City 494",
+    "careerLevel": 10,
+    "entryDate": "2022-03-21T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "m2kbw9g44a",
+    "name": "Employee 38",
+    "address": "Street: Street 239, City: City 466",
+    "careerLevel": 8,
+    "entryDate": "2022-03-11T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "dfe22kwpy79",
+    "name": "Employee 39",
+    "address": "Street: Street 39, City: City 108",
+    "careerLevel": 1,
+    "entryDate": "2022-06-18T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "yal270j3sv",
+    "name": "Employee 40",
+    "address": "Street: Street 348, City: City 368",
+    "careerLevel": 1,
+    "entryDate": "2022-09-30T00:00:00.000Z",
+    "exitDate": "2024-02-12T00:00:00.000Z"
+  },
+  {
+    "id": "dz5poe99rx8",
+    "name": "Employee 41",
+    "address": "Street: Street 152, City: City 354",
+    "careerLevel": 4,
+    "entryDate": "2022-07-27T00:00:00.000Z",
+    "exitDate": "2023-12-09T00:00:00.000Z"
+  },
+  {
+    "id": "wu8uytrfdsq",
+    "name": "Employee 42",
+    "address": "Street: Street 445, City: City 449",
+    "careerLevel": 1,
+    "entryDate": "2022-12-18T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "94xgn9e6x97",
+    "name": "Employee 43",
+    "address": "Street: Street 14, City: City 183",
+    "careerLevel": 6,
+    "entryDate": "2022-09-30T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "h9vvy87pver",
+    "name": "Employee 44",
+    "address": "Street: Street 67, City: City 478",
+    "careerLevel": 4,
+    "entryDate": "2022-06-18T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "7qebtrsdrjr",
+    "name": "Employee 45",
+    "address": "Street: Street 498, City: City 209",
+    "careerLevel": 8,
+    "entryDate": "2022-11-13T00:00:00.000Z",
+    "exitDate": "2024-03-27T00:00:00.000Z"
+  },
+  {
+    "id": "gxq1woaz5oh",
+    "name": "Employee 46",
+    "address": "Street: Street 432, City: City 8",
+    "careerLevel": 7,
+    "entryDate": "2022-05-05T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "73hwby15dw4",
+    "name": "Employee 47",
+    "address": "Street: Street 91, City: City 207",
+    "careerLevel": 9,
+    "entryDate": "2022-12-11T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "afgpht5b1sv",
+    "name": "Employee 48",
+    "address": "Street: Street 437, City: City 217",
+    "careerLevel": 8,
+    "entryDate": "2022-08-08T00:00:00.000Z",
+    "exitDate": null
+  },
+  {
+    "id": "exggg37cdfj",
+    "name": "Employee 49",
+    "address": "Street: Street 164, City: City 460",
+    "careerLevel": 6,
+    "entryDate": "2022-04-13T00:00:00.000Z",
+    "exitDate": null
+  }
+]
