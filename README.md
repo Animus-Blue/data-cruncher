@@ -109,7 +109,7 @@ You can query objects by id and use joins and transformations just like with vie
 
 ## Supported data types
 
-cruncherwink can be used for JavaScript objects (including deeply nested objects) with keys, values of primitives and arrays out of the box. These are the kind of objects you usually get after deserializing objects from a database or from network calls.
+data-cruncher can be used for JavaScript objects (including deeply nested objects) with keys, values of primitives and arrays out of the box. These are the kind of objects you usually get after deserializing objects from a database or from network calls.
 
 example:
 
@@ -131,8 +131,8 @@ const serializableObject = {
 };
 ```
 
-cruncher will detect these objects equality by value equality. This means that two objects with different references but identical values will be treated as equal.
-Feeding cruncher with objects that contain es6 + newer data structures (like Maps, Sets) can result in objects equality not being detected correctly.
+data-cruncher will detect these objects equality by value equality. This means that two objects with different references but identical values will be treated as equal.
+Feeding data-cruncher with objects that contain es6 + newer data structures (like Maps, Sets) can result in objects equality not being detected correctly.
 
 ## License
 
