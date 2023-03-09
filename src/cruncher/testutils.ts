@@ -14,16 +14,29 @@ const TestUtils = {
     if (!references) {
       throw new Error("References not available");
     }
-    return references;
+    const result = {};
+    for (const a of references.keys()) {
+      result[a] = {};
+      for (const b of references.get(a).keys()) {
+        result[a][b] = {};
+        for (const c of references.get(a).get(b).keys()) {
+          result[a][b][c] = {};
+          for (const d of references.get(a).get(b).get(c).keys()) {
+            result[a][b][c][d] = true;
+          }
+        }
+      }
+    }
+    return result;
   },
   getInternalSize: (cruncher: Cruncher, collection: string) => {
     if (
-      (cruncher as any).collections[collection].data.length !==
-      (cruncher as any).normalizedCollections[collection].size
+      (cruncher as any).collections.get(collection).data.length !==
+      (cruncher as any).normalizedCollections.get(collection).size
     ) {
       throw new Error("Internal size mismatch");
     }
-    return (cruncher as any).collections[collection].data.length;
+    return (cruncher as any).collections.get(collection).data.length;
   },
   isInnerStructureEqual: (
     cruncher: Cruncher,
@@ -32,12 +45,12 @@ const TestUtils = {
   ) => {
     const isEqual = wrong ? wrongEqual : internalEqual;
     for (const collection in (cruncher as any).collections) {
-      (cruncher as any).collections[collection].data.sort((a, b) =>
-        a.id.localeCompare(b.id)
-      );
-      (other as any).collections[collection].data.sort((a, b) =>
-        a.id.localeCompare(b.id)
-      );
+      (cruncher as any).collections
+        .get(collection)
+        .data.sort((a, b) => a.id.localeCompare(b.id));
+      (other as any).collections
+        .get(collection)
+        .data.sort((a, b) => a.id.localeCompare(b.id));
     }
     if (!isEqual((cruncher as any).collections, (other as any).collections)) {
       return false;
@@ -142,13 +155,12 @@ function internalEqual(a, b) {
 // The following function was created from their code and modified
 function wrongEqual(a, b) {
   if (a && b && typeof a == "object" && typeof b == "object") {
+    if (a.constructor !== b.constructor) return false;
+
     var length, i, keys;
     if (Array.isArray(a)) {
       length = a.length;
-      if (length != b.length) {
-        return false;
-      }
-
+      if (length != b.length) return false;
       for (i = length; i-- !== 0; )
         if (!internalEqual(a[i], b[i])) {
           return false;
@@ -156,14 +168,44 @@ function wrongEqual(a, b) {
       return true;
     }
 
+    if (a instanceof Map && b instanceof Map) {
+      if (a.size !== b.size) return false;
+      for (i of a.entries()) if (!b.has(i[0])) return false;
+      for (i of a.entries())
+        if (!internalEqual(i[1], b.get(i[0]))) return false;
+      return true;
+    }
+
+    if (a instanceof Set && b instanceof Set) {
+      if (a.size !== b.size) return false;
+      for (i of a.entries()) if (!b.has(i[0])) return false;
+      return true;
+    }
+
+    if (ArrayBuffer.isView(a) && ArrayBuffer.isView(b)) {
+      length = (a as any).length;
+      if (length != (b as any).length) return false;
+      for (i = length; i-- !== 0; ) if (a[i] !== b[i]) return false;
+      return true;
+    }
+
+    if (a.constructor === RegExp)
+      return a.source === b.source && a.flags === b.flags;
+    if (a.valueOf !== Object.prototype.valueOf)
+      return a.valueOf() === b.valueOf();
+    if (a.toString !== Object.prototype.toString)
+      return a.toString() === b.toString();
+
     keys = Object.keys(a);
     length = keys.length;
-    if (length !== Object.keys(b).length) {
-      return false;
-    }
+    if (length !== Object.keys(b).length) return false;
+
+    for (i = length; i-- !== 0; )
+      if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false;
 
     for (i = length; i-- !== 0; ) {
       var key = keys[i];
+
       if (!internalEqual(a[key], b[key])) {
         return false;
       }
@@ -171,6 +213,7 @@ function wrongEqual(a, b) {
 
     return true;
   }
+
   if (typeof a === "function" && typeof b === "function") {
     return true;
   }
@@ -182,8 +225,8 @@ function internalSortRecursively(data) {
   if (Array.isArray(data)) {
     data.sort((a, b) => a.id.localeCompare(b.id));
   } else {
-    for (const key in data) {
-      internalSortRecursively(data[key]);
+    for (const key of data.keys()) {
+      internalSortRecursively(data.get(key));
     }
   }
 }

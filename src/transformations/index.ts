@@ -13,7 +13,7 @@ export type Grouping<
   : undefined | S[];
 
 function group<T extends { [key: string]: any }, K extends Array<keyof T>, S>(
-  data: any,
+  data: Map<string, any>,
   array: T[],
   transformation: (item: T) => S,
   getPath
@@ -26,19 +26,19 @@ function group<T extends { [key: string]: any }, K extends Array<keyof T>, S>(
   }
 }
 
-function addRecursively(data: any, path: string[], value: any) {
+function addRecursively(data: Map<string, any>, path: string[], value: any) {
   if (path.length === 1) {
-    if (!data[path[0]]) {
-      data[path[0]] = [value];
+    if (!data.has(path[0])) {
+      data.set(path[0], [value]);
     } else {
-      data[path[0]].push(value);
+      data.get(path[0]).push(value);
     }
     return;
   }
-  if (!data[path[0]]) {
-    data[path[0]] = {};
+  if (!data.has(path[0])) {
+    data.set(path[0], new Map());
   }
-  addRecursively(data[path[0]], path.slice(1), value);
+  addRecursively(data.get(path[0]), path.slice(1), value);
 }
 
 function normalize(array: any, idKey: string) {

@@ -42,42 +42,34 @@ interface View {
   joins?: Join[];
   joinAndTransform: (item: any) => any;
   keys: (string | number)[];
-  data: any;
+  data: Map<string, any>;
   getPath: (item: any) => (string | number)[] | null;
   view: (...args: (string | number | boolean)[]) => any;
 }
 
 class Cruncher {
   private views: View[] = [];
-  private normalizedCollections: {
-    [collection: string]: Map<string | number, any>;
-  };
-  private collections: { [collection: string]: { idKey: string; data: any[] } };
-  private references: {
-    [refHolderCollection: string]: {
-      [referencedCollection: string]: {
-        [referencedCollectionId: string]: { [refHolderId: string]: true };
-      };
-    };
-  };
+  private normalizedCollections: Map<string, Map<string | number, any>>;
+  private collections: Map<string, { idKey: string; data: any[] }>;
+  private references: Map<string, Map<string, Map<string, Map<string, true>>>>;
 
   constructor() {
-    this.normalizedCollections = {};
-    this.collections = {};
-    this.references = {};
+    this.normalizedCollections = new Map();
+    this.collections = new Map();
+    this.references = new Map();
   }
 
   public addCollection(name: string, idKey: string, data?: any[]): void {
     const normalizedCollection = new Map<string, any>();
     data?.forEach((t) => normalizedCollection.set(t[idKey], t));
-    this.normalizedCollections[name] = normalizedCollection;
-    if (this.normalizedCollections[name].get(undefined as any)) {
+    this.normalizedCollections.set(name, normalizedCollection);
+    if (this.normalizedCollections.get(name)?.get(undefined as any)) {
       throw new Error(`Collection ${name} contains an item with undefined id`);
     }
-    this.collections[name] = {
+    this.collections.set(name, {
       idKey: idKey,
       data: [...(data || [])],
-    };
+    });
   }
 
   private getView<K extends (string | number)[]>(
@@ -92,19 +84,19 @@ class Cruncher {
       return alreadyPresentViews;
     }
     const keys = options.keys;
-    const idKey = this.collections[options.collection].idKey;
+    const idKey = this.collections.get(options.collection)?.idKey;
     for (let join of options.joins || []) {
-      if (!this.collections[join.collection]) {
+      if (!this.collections.has(join.collection)) {
         throw new Error(`Collection ${join.collection} not found`);
       }
-      if (!this.references[options.collection]?.[join.key]) {
-        if (!this.references[options.collection]) {
-          this.references[options.collection] = {};
-        }
-        this.references[options.collection][join.key] = {};
-        for (const item of this.collections[options.collection].data) {
+      if (!this.references.has(options.collection)) {
+        this.references.set(options.collection, new Map());
+      }
+      if (!this.references.get(options.collection)!.has(join.key)) {
+        this.references.get(options.collection)!.set(join.key, new Map());
+        for (const item of this.collections.get(options.collection)!.data) {
           addReference(
-            this.references[options.collection][join.key],
+            this.references.get(options.collection)!.get(join.key)!,
             item,
             join.key,
             idKey
@@ -134,13 +126,13 @@ class Cruncher {
     const joinAndTransform = getJoinAndTransform(
       options.joins,
       options.transformation,
-      idKey,
+      idKey as string,
       this.normalizedCollections
     );
-    const data: any = {};
+    const data: Map<string, any> = new Map();
     group(
       data,
-      this.collections[options.collection].data,
+      this.collections.get(options.collection)!.data,
       joinAndTransform,
       getPath
     );
@@ -168,7 +160,7 @@ class Cruncher {
     }
     const newView: View = {
       collection: options.collection,
-      isInitialized: this.collections[options.collection].data.length > 0,
+      isInitialized: this.collections.get(options.collection)!.data.length > 0,
       transformation: options.transformation,
       groupings: options.groupings,
       joins: options.joins,
@@ -192,10 +184,11 @@ class Cruncher {
       const added: any[] = [];
       const deleted: any[] = [];
       const edited: { updated: any; prev: any }[] = [];
-      const collection = this.collections[update.collection].data;
-      const idKey = this.collections[update.collection].idKey;
-      const normalizedCollection =
-        this.normalizedCollections[update.collection];
+      const collection = this.collections.get(update.collection)!.data;
+      const idKey = this.collections.get(update.collection)!.idKey;
+      const normalizedCollection = this.normalizedCollections.get(
+        update.collection
+      )!;
       for (const t of update.data) {
         const existing = normalizedCollection.get(t[idKey]);
         if (!existing) {
@@ -233,51 +226,61 @@ class Cruncher {
     }[]
   ) {
     for (const mutation of mutations) {
-      const idKey = this.collections[mutation.collection].idKey;
-      const normalizedData = this.normalizedCollections[mutation.collection];
-      const references = this.references[mutation.collection];
+      const idKey = this.collections.get(mutation.collection)!.idKey;
+      const normalizedData = this.normalizedCollections.get(
+        mutation.collection
+      )!;
+      const references = this.references.get(mutation.collection);
 
       // Handle deleted
       if (mutation.deleted.length > 0) {
         for (const t of mutation.deleted) {
           normalizedData.delete(t[idKey]);
-          for (const ref in references) {
-            deleteReference(references[ref], t, ref, idKey);
+          if (references) {
+            for (const [ref, val] of references!) {
+              deleteReference(val, t, ref, idKey);
+            }
           }
         }
         const deleted = normalize(mutation.deleted, idKey);
-        this.collections[mutation.collection].data = this.collections[
-          mutation.collection
-        ].data.filter((item) => !deleted[item[idKey]]);
+        this.collections.get(mutation.collection)!.data = this.collections
+          .get(mutation.collection)!
+          .data.filter((item) => !deleted[item[idKey]]);
       }
 
       // Handle edited
       if (mutation.edited.length > 0) {
         for (const t of mutation.edited) {
           normalizedData.set(t.prev[idKey], t.updated);
-          for (const ref in references) {
-            if (t.updated[ref] !== t.prev[ref])
-              deleteReference(references[ref], t.prev, ref, idKey);
-            addReference(references[ref], t.updated, ref, idKey);
+          if (references) {
+            for (const [ref, val] of references!) {
+              if (t.updated[ref] !== t.prev[ref])
+                deleteReference(val, t.prev, ref, idKey);
+              addReference(val, t.updated, ref, idKey);
+            }
           }
         }
         const edited = normalizeAfterProp(mutation.edited, "prev", idKey);
-        this.collections[mutation.collection].data = this.collections[
-          mutation.collection
-          // TODO: optimize
-        ].data.map((item) =>
-          edited[item[idKey]] ? edited[item[idKey]].updated : item
-        );
+        this.collections.get(mutation.collection)!.data = this.collections
+          .get(
+            mutation.collection
+            // TODO: optimize
+          )!
+          .data.map((item) =>
+            edited[item[idKey]] ? edited[item[idKey]].updated : item
+          );
       }
 
       // Handle added
       if (mutation.added.length > 0) {
-        const collection = this.collections[mutation.collection].data;
+        const collection = this.collections.get(mutation.collection)!.data;
         for (const t of mutation.added) {
-          normalizedData.set(t[idKey], t);
           collection.push(t);
-          for (const ref in references) {
-            addReference(references[ref], t, ref, idKey);
+          normalizedData.set(t[idKey], t);
+          if (references) {
+            for (const [ref, val] of references!) {
+              addReference(val, t, ref, idKey);
+            }
           }
         }
       }
@@ -294,19 +297,19 @@ class Cruncher {
   ) {
     for (const view of this.views) {
       if (!view.isInitialized) {
-        const ts = this.collections[view.collection].data;
+        const ts = this.collections.get(view.collection)!.data;
         if (ts.length > 0) {
           group(
             view.data,
-            this.collections[view.collection].data,
+            this.collections.get(view.collection)!.data,
             view.joinAndTransform,
             view.getPath
           );
           view.isInitialized = true;
         }
       } else {
-        const ownIdKey = this.collections[view.collection].idKey;
-        const references = this.references[view.collection];
+        const ownIdKey = this.collections.get(view.collection)!.idKey;
+        const references = this.references.get(view.collection);
         let ownMutation:
           | {
               collection: string;
@@ -315,7 +318,7 @@ class Cruncher {
               deleted: any[];
             }
           | undefined;
-        const toBeCheckedForChanges: { [id: string]: true } = {};
+        const toBeCheckedForChanges: Map<string, true> = new Map();
         for (const mutation of mutations) {
           if (mutation.collection === view.collection) {
             ownMutation = mutation;
@@ -324,28 +327,31 @@ class Cruncher {
               ?.filter((join) => join.collection === mutation.collection)
               ?.map((join) => join.key);
             for (const keyToRef of keysToRefs || []) {
-              const refs = references[keyToRef];
+              const refs = references.get(keyToRef);
               if (refs) {
-                const foreignIdKey =
-                  this.collections[mutation.collection].idKey;
+                const foreignIdKey = this.collections.get(
+                  mutation.collection
+                )!.idKey;
                 for (const t of mutation.added) {
-                  if (refs[t[foreignIdKey]]) {
-                    for (const ownId in refs[t[foreignIdKey]]) {
-                      toBeCheckedForChanges[ownId] = true;
+                  if (refs.has(t[foreignIdKey])) {
+                    for (const ownId of refs.get(t[foreignIdKey])!.keys()) {
+                      toBeCheckedForChanges.set(ownId, true);
                     }
                   }
                 }
                 for (const t of mutation.edited) {
-                  if (refs[t.prev[foreignIdKey]]) {
-                    for (const ownId in refs[t.prev[foreignIdKey]]) {
-                      toBeCheckedForChanges[ownId] = true;
+                  if (refs.has(t.prev[foreignIdKey])) {
+                    for (const ownId of refs
+                      .get(t.prev[foreignIdKey])!
+                      .keys()) {
+                      toBeCheckedForChanges.set(ownId, true);
                     }
                   }
                 }
                 for (const t of mutation.deleted) {
-                  if (refs[t[foreignIdKey]]) {
-                    for (const ownId in refs[t[foreignIdKey]]) {
-                      toBeCheckedForChanges[ownId] = true;
+                  if (refs.has(t[foreignIdKey])) {
+                    for (const ownId of refs.get(t[foreignIdKey])!.keys()) {
+                      toBeCheckedForChanges.set(ownId, true);
                     }
                   }
                 }
@@ -355,21 +361,21 @@ class Cruncher {
         }
 
         // Handle own Collection
-        const deleted: any = {};
+        const deleted: Map<string | number, any> = new Map();
         if (ownMutation) {
           for (const t of ownMutation.deleted) {
-            delete toBeCheckedForChanges[t[ownIdKey]];
+            toBeCheckedForChanges.delete(t[ownIdKey]);
             const path = view.getPath(t);
             if (path) {
               collectMutationsRecursively(deleted, path, t, t[ownIdKey]);
             }
           }
-          const added: any = {};
-          const edited: any = {};
+          const added: Map<string | number, any> = new Map();
+          const edited: Map<string | number, any> = new Map();
           for (const t of ownMutation.edited) {
             const prevPath = view.getPath(t.prev);
             const updatedPath = view.getPath(t.updated);
-            delete toBeCheckedForChanges[t.prev[ownIdKey]];
+            toBeCheckedForChanges.delete(t.prev[ownIdKey]);
             if (equal(prevPath, updatedPath)) {
               if (prevPath) {
                 collectMutationsRecursively(
@@ -428,15 +434,19 @@ class Cruncher {
             view.keys.length,
             [],
             (keysAndTs, path) => {
-              addRecursivelyAll(view.data, path, Object.values(keysAndTs));
+              addRecursivelyAll(
+                view.data,
+                path,
+                Array.from(keysAndTs.values())
+              );
             }
           );
         }
 
         // Go through all items that might have changed
-        const mutatedTs: any = {};
-        for (const id in toBeCheckedForChanges) {
-          const t = this.normalizedCollections[view.collection].get(id);
+        const mutatedTs: Map<string | number, any> = new Map();
+        for (const id of toBeCheckedForChanges.keys()) {
+          const t = this.normalizedCollections.get(view.collection)!.get(id);
           const path = view.getPath(t);
           if (path) {
             collectMutationsRecursively(mutatedTs, path, t, id);
@@ -455,7 +465,7 @@ class Cruncher {
   public view = (collection: string) => {
     return {
       keys: <K extends string[]>(...keys: K) => {
-        if (keys.indexOf(this.collections[collection].idKey) > -1) {
+        if (keys.indexOf(this.collections.get(collection)!.idKey) > -1) {
           throw new Error("An id cannot be a view key. Use byId instead.");
         }
         const options: ViewOptions = { collection, keys };
@@ -505,7 +515,7 @@ class Cruncher {
   public byId = (collection: string) => {
     const options: ViewOptions = {
       collection,
-      keys: [this.collections[collection].idKey],
+      keys: [this.collections.get(collection)!.idKey],
       returnSingleItemWithoutGrouping: true,
     };
 
@@ -534,7 +544,7 @@ class Cruncher {
 }
 
 function addReference(
-  refs: { [foreignId: string]: { [ownId: string]: true } },
+  refs: Map<string, Map<string, true>>,
   item,
   joinKey,
   ownIdKey
@@ -553,18 +563,18 @@ function addReference(
 }
 
 function addSingleReference(
-  refs: { [foreignId: string]: { [ownId: string]: true } },
+  refs: Map<string, Map<string, true>>,
   foreignRef,
   ownId
 ) {
-  if (!refs[foreignRef]) {
-    refs[foreignRef] = {};
+  if (!refs.has(foreignRef)) {
+    refs.set(foreignRef, new Map());
   }
-  refs[foreignRef][ownId] = true;
+  refs.get(foreignRef)!.set(ownId, true);
 }
 
 function deleteReference(
-  refs: { [foreignId: string]: { [ownId: string]: true } },
+  refs: Map<string, Map<string, true>>,
   item,
   joinKey,
   ownIdKey
@@ -582,15 +592,23 @@ function deleteReference(
   }
 }
 
-function deleteSingleReference(refs, foreignRef, ownId) {
-  if (Object.keys(refs[foreignRef]).length === 1) {
-    delete refs[foreignRef];
+function deleteSingleReference(
+  refs: Map<string, Map<string, true>>,
+  foreignRef,
+  ownId
+) {
+  if (refs.get(foreignRef)!.size === 1) {
+    refs.delete(foreignRef);
   } else {
-    delete refs[foreignRef][ownId];
+    refs.get(foreignRef)!.delete(ownId);
   }
 }
 
-function mutateIfChanged(joinAndtransform, data, ownIdKey) {
+function mutateIfChanged(
+  joinAndtransform,
+  data: Map<string | number, any>,
+  ownIdKey
+) {
   return function (keysAndTs, path) {
     const obj = getObjectAtLevel(data, path, 1);
     let updated: number = 0;
@@ -602,64 +620,73 @@ function mutateIfChanged(joinAndtransform, data, ownIdKey) {
         return updatedItem;
       }
     }
-    const updatedItems = obj[path[path.length - 1]].map((item) =>
-      keysAndTs[item[ownIdKey]]
-        ? updateOrNot(item, joinAndtransform(keysAndTs[item[ownIdKey]]))
-        : item
-    );
+    const updatedItems = obj
+      .get(path[path.length - 1])
+      .map((item) =>
+        keysAndTs.has(item[ownIdKey])
+          ? updateOrNot(item, joinAndtransform(keysAndTs.get(item[ownIdKey])))
+          : item
+      );
     if (updated > 0) {
-      obj[path[path.length - 1]] = updatedItems;
+      obj.set(path[path.length - 1], updatedItems);
     }
   };
 }
 
-function getObjectAtLevel(data, path, targetLevel) {
+function getObjectAtLevel(data: Map<string | number, any>, path, targetLevel) {
   if (path.length === targetLevel) {
     return data;
   }
-  return getObjectAtLevel(data[path[0]], path.slice(1), targetLevel);
+  return getObjectAtLevel(data.get(path[0]), path.slice(1), targetLevel);
 }
 
-function addRecursivelyAll(data: any, path: string[], value: any[]) {
+function addRecursivelyAll(
+  data: Map<string | number, any>,
+  path: string[],
+  value: any[]
+) {
   if (path.length === 1) {
-    if (!data[path[0]]) {
-      data[path[0]] = value;
+    if (!data.has(path[0])) {
+      data.set(path[0], value);
     } else {
-      data[path[0]] = [...data[path[0]], ...value];
+      data.set(path[0], [...data.get(path[0]), ...value]);
     }
     return;
   }
-  if (!data[path[0]]) {
-    data[path[0]] = {};
+  if (!data.has(path[0])) {
+    data.set(path[0], new Map());
   }
-  addRecursivelyAll(data[path[0]], path.slice(1), value);
+  addRecursivelyAll(data.get(path[0]), path.slice(1), value);
 }
 
 function deleteRecursivelyAll(
-  data: any,
+  data: Map<string | number, any>,
   path: string[],
-  values: { [id: string]: any },
+  values: Map<string | number, any>,
   idKey
 ) {
   if (path.length === 1) {
-    if (!data[path[0]]) {
+    if (!data.has(path[0])) {
       console.error("Cannot find path to delete");
     } else {
-      data[path[0]] = data[path[0]].filter((item) => !values[item[idKey]]);
-      if (data[path[0]].length === 0) {
-        delete data[path[0]];
+      data.set(
+        path[0],
+        data.get(path[0]).filter((item) => !values.has(item[idKey]))
+      );
+      if (data.get(path[0]).length === 0) {
+        data.delete(path[0]);
         return true;
       }
     }
     return false;
   }
-  if (!data[path[0]]) {
+  if (!data.has(path[0])) {
     console.error("Cannot find path to delete");
     return false;
   }
-  if (deleteRecursivelyAll(data[path[0]], path.slice(1), values, idKey)) {
-    if (Object.keys(data[path[0]]).length === 0) {
-      delete data[path[0]];
+  if (deleteRecursivelyAll(data.get(path[0]), path.slice(1), values, idKey)) {
+    if (data.get(path[0]).size === 0) {
+      data.delete(path[0]);
       return true;
     }
   }
@@ -667,23 +694,25 @@ function deleteRecursivelyAll(
 }
 
 function collectMutationsRecursively(
-  data: any,
+  data: Map<string | number, any>,
   path: (string | number)[],
   value: any,
   id: string
 ) {
   if (path.length === 1) {
-    if (!data[path[0]]) {
-      data[path[0]] = { [id]: value };
+    if (!data.has(path[0])) {
+      const map = new Map();
+      map.set(id, value);
+      data.set(path[0], map);
     } else {
-      data[path[0]][id] = value;
+      data.get(path[0])!.set(id, value);
     }
     return;
   }
-  if (!data[path[0]]) {
-    data[path[0]] = {};
+  if (!data.has(path[0])) {
+    data.set(path[0], new Map());
   }
-  collectMutationsRecursively(data[path[0]], path.slice(1), value, id);
+  collectMutationsRecursively(data.get(path[0]), path.slice(1), value, id);
 }
 
 function unwrapMutationsRecursively(
@@ -696,9 +725,9 @@ function unwrapMutationsRecursively(
     callback(changes, path);
     return;
   }
-  for (const key in changes) {
+  for (const key of changes.keys()) {
     unwrapMutationsRecursively(
-      changes[key],
+      changes.get(key),
       level - 1,
       [...path, key],
       callback

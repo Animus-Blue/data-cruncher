@@ -668,7 +668,7 @@ test("can do views on booleans", () => {
   expect(TestUtils.getInternalSize(cruncher, "students")).toBe(6);
 });
 
-test("does automatic type conversion from boolean and number to string", () => {
+test("takes types of keys into account", () => {
   const cruncher = new Cruncher();
   cruncher.addCollection("students", "id", studentsWithHappiness1);
   const studentsByHappinessAndAge = cruncher
@@ -684,13 +684,13 @@ test("does automatic type conversion from boolean and number to string", () => {
   expect(unhappyStudents24).toEqual([
     { id: "5", name: "Jacky", age: 24, isHappy: false },
   ]);
-  expect(studentsByHappinessAndAge("true", 20)).toBe(happyStudents20);
-  expect(studentsByHappinessAndAge("true", "20")).toBe(happyStudents20);
-  expect(studentsByHappinessAndAge("false", 24)).toBe(unhappyStudents24);
-  expect(studentsByHappinessAndAge("false", "24")).toBe(unhappyStudents24);
+  expect(studentsByHappinessAndAge("true", 20)).toEqual([]);
+  expect(studentsByHappinessAndAge("true", "20")).toEqual([]);
+  expect(studentsByHappinessAndAge("false", 24)).toEqual([]);
+  expect(studentsByHappinessAndAge("false", "24")).toEqual([]);
 });
 
-test("does automatic type conversion from boolean and number to string when querying", () => {
+test("takes types of keys into account when querying", () => {
   const cruncher = new Cruncher();
   cruncher.addCollection("students", "id", studentsWithHappiness3);
   const studentsByHappinessAndAge = cruncher
@@ -698,10 +698,12 @@ test("does automatic type conversion from boolean and number to string when quer
     .keys("isHappy", "age")
     .get();
 
-  expect(studentsByHappinessAndAge(true, 21)).toEqual([
+  expect(studentsByHappinessAndAge(true, 21)).toEqual([]);
+  expect(studentsByHappinessAndAge(true, "21")).toEqual([
     { id: "2", name: "Jane", age: "21", isHappy: true },
   ]);
-  expect(studentsByHappinessAndAge(true, 23)).toEqual([
+  expect(studentsByHappinessAndAge(true, 23)).toEqual([]);
+  expect(studentsByHappinessAndAge("true", 23)).toEqual([
     { id: "6", name: "Jacky", age: 23, isHappy: "true" },
   ]);
 });

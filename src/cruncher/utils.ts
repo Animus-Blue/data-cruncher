@@ -1,63 +1,98 @@
 const EMPTY_ARRAY = [];
 
 function getSingleItemGetter(
-  data: any,
+  data: Map<string | number, any>,
   keys: (string | number)[]
 ): (...args: (string | number)[]) => any {
   switch (keys.length) {
     case 0:
       return (...args) => data[0];
     case 1:
-      return (...args) => data[args[0]]?.[0];
+      return (...args) => data.get(args[0])?.[0];
     default:
       throw new Error("Not implemented");
   }
 }
 
 function getGetter(
-  data: any,
+  data: Map<string | number, any>,
   keys: (string | number)[]
 ): (...args: (string | number)[]) => any[] {
   switch (keys.length) {
-    case 0:
-      return (...args) => data || EMPTY_ARRAY;
     case 1:
-      return (...args) => data[args[0]] || EMPTY_ARRAY;
+      return (...args) => data.get(args[0]) || EMPTY_ARRAY;
     case 2:
-      return (...args) => data[args[0]]?.[args[1]] || EMPTY_ARRAY;
+      return (...args) => data.get(args[0])?.get(args[1]) || EMPTY_ARRAY;
     case 3:
-      return (...args) => data[args[0]]?.[args[1]]?.[args[2]] || EMPTY_ARRAY;
+      return (...args) =>
+        data.get(args[0])?.get(args[1])?.get(args[2]) || EMPTY_ARRAY;
     case 4:
       return (...args) =>
-        data[args[0]]?.[args[1]]?.[args[2]]?.[args[3]] || EMPTY_ARRAY;
+        data.get(args[0])?.get(args[1])?.get(args[2])?.get(args[3]) ||
+        EMPTY_ARRAY;
     case 5:
       return (...args) =>
-        data[args[0]]?.[args[1]]?.[args[2]]?.[args[3]]?.[args[4]] ||
-        EMPTY_ARRAY;
+        data
+          .get(args[0])
+          ?.get(args[1])
+          ?.get(args[2])
+          ?.get(args[3])
+          ?.get(args[4]) || EMPTY_ARRAY;
     case 6:
       return (...args) =>
-        data[args[0]]?.[args[1]]?.[args[2]]?.[args[3]]?.[args[4]]?.[args[5]] ||
-        EMPTY_ARRAY;
+        data
+          .get(args[0])
+          ?.get(args[1])
+          ?.get(args[2])
+          ?.get(args[3])
+          ?.get(args[4])
+          ?.get(args[5]) || EMPTY_ARRAY;
     case 7:
       return (...args) =>
-        data[args[0]]?.[args[1]]?.[args[2]]?.[args[3]]?.[args[4]]?.[args[5]]?.[
-          args[6]
-        ] || EMPTY_ARRAY;
+        data
+          .get(args[0])
+          ?.get(args[1])
+          ?.get(args[2])
+          ?.get(args[3])
+          ?.get(args[4])
+          ?.get(args[5])
+          ?.get(args[6]) || EMPTY_ARRAY;
     case 8:
       return (...args) =>
-        data[args[0]]?.[args[1]]?.[args[2]]?.[args[3]]?.[args[4]]?.[args[5]]?.[
-          args[6]
-        ]?.[args[7]] || EMPTY_ARRAY;
+        data
+          .get(args[0])
+          ?.get(args[1])
+          ?.get(args[2])
+          ?.get(args[3])
+          ?.get(args[4])
+          ?.get(args[5])
+          ?.get(args[6])
+          ?.get(args[7]) || EMPTY_ARRAY;
     case 9:
       return (...args) =>
-        data[args[0]]?.[args[1]]?.[args[2]]?.[args[3]]?.[args[4]]?.[args[5]]?.[
-          args[6]
-        ]?.[args[7]]?.[args[8]] || EMPTY_ARRAY;
+        data
+          .get(args[0])
+          ?.get(args[1])
+          ?.get(args[2])
+          ?.get(args[3])
+          ?.get(args[4])
+          ?.get(args[5])
+          ?.get(args[6])
+          ?.get(args[7])
+          ?.get(args[8]) || EMPTY_ARRAY;
     case 10:
       return (...args) =>
-        data[args[0]]?.[args[1]]?.[args[2]]?.[args[3]]?.[args[4]]?.[args[5]]?.[
-          args[6]
-        ]?.[args[7]]?.[args[8]]?.[args[9]] || EMPTY_ARRAY;
+        data
+          .get(args[0])
+          ?.get(args[1])
+          ?.get(args[2])
+          ?.get(args[3])
+          ?.get(args[4])
+          ?.get(args[5])
+          ?.get(args[6])
+          ?.get(args[7])
+          ?.get(args[8])
+          ?.get(args[9]) || EMPTY_ARRAY;
     default:
       throw new Error("Not implemented");
   }
@@ -79,53 +114,84 @@ function getGetterWithGrouping(
     case 0:
       return (...args) => data || EMPTY_ARRAY;
     case 1:
-      return (...args) => data[group[0](args)] || EMPTY_ARRAY;
+      return (...args) => data.get(group[0](args)) || EMPTY_ARRAY;
     case 2:
-      return (...args) => data[group[0](args)]?.[group[1](args)] || EMPTY_ARRAY;
+      return (...args) =>
+        data.get(group[0](args))?.get(group[1](args)) || EMPTY_ARRAY;
     case 3:
       return (...args) =>
-        data[group[0](args)]?.[group[1](args)]?.[group[2](args)] || EMPTY_ARRAY;
+        data.get(group[0](args))?.get(group[1](args))?.get(group[2](args)) ||
+        EMPTY_ARRAY;
     case 4:
       return (...args) =>
-        data[group[0](args)]?.[group[1](args)]?.[group[2](args)]?.[
-          group[3](args)
-        ] || EMPTY_ARRAY;
+        data
+          .get(group[0](args))
+          ?.get(group[1](args))
+          ?.get(group[2](args))
+          ?.get(group[3](args)) || EMPTY_ARRAY;
     case 5:
       return (...args) =>
-        data[group[0](args)]?.[group[1](args)]?.[group[2](args)]?.[
-          group[3](args)
-        ]?.[group[4](args)] || EMPTY_ARRAY;
+        data
+          .get(group[0](args))
+          ?.get(group[1](args))
+          ?.get(group[2](args))
+          ?.get(group[3](args))
+          ?.get(group[4](args)) || EMPTY_ARRAY;
     case 6:
       return (...args) =>
-        data[group[0](args)]?.[group[1](args)]?.[group[2](args)]?.[
-          group[3](args)
-        ]?.[group[4](args)]?.[group[5](args)] || EMPTY_ARRAY;
+        data
+          .get(group[0](args))
+          ?.get(group[1](args))
+          ?.get(group[2](args))
+          ?.get(group[3](args))
+          ?.get(group[4](args))
+          ?.get(group[5](args)) || EMPTY_ARRAY;
     case 7:
       return (...args) =>
-        data[group[0](args)]?.[group[1](args)]?.[group[2](args)]?.[
-          group[3](args)
-        ]?.[group[4](args)]?.[group[5](args)]?.[group[6](args)] || EMPTY_ARRAY;
+        data
+          .get(group[0](args))
+          ?.get(group[1](args))
+          ?.get(group[2](args))
+          ?.get(group[3](args))
+          ?.get(group[4](args))
+          ?.get(group[5](args))
+          ?.get(group[6](args)) || EMPTY_ARRAY;
     case 8:
       return (...args) =>
-        data[group[0](args)]?.[group[1](args)]?.[group[2](args)]?.[
-          group[3](args)
-        ]?.[group[4](args)]?.[group[5](args)]?.[group[6](args)]?.[
-          group[7](args)
-        ] || EMPTY_ARRAY;
+        data
+          .get(group[0](args))
+          ?.get(group[1](args))
+          ?.get(group[2](args))
+          ?.get(group[3](args))
+          ?.get(group[4](args))
+          ?.get(group[5](args))
+          ?.get(group[6](args))
+          ?.get(group[7](args)) || EMPTY_ARRAY;
     case 9:
       return (...args) =>
-        data[group[0](args)]?.[group[1](args)]?.[group[2](args)]?.[
-          group[3](args)
-        ]?.[group[4](args)]?.[group[5](args)]?.[group[6](args)]?.[
-          group[7](args)
-        ]?.[group[8](args)] || EMPTY_ARRAY;
+        data
+          .get(group[0](args))
+          ?.get(group[1](args))
+          ?.get(group[2](args))
+          ?.get(group[3](args))
+          ?.get(group[4](args))
+          ?.get(group[5](args))
+          ?.get(group[6](args))
+          ?.get(group[7](args))
+          ?.get(group[8](args)) || EMPTY_ARRAY;
     case 10:
       return (...args) =>
-        data[group[0](args)]?.[group[1](args)]?.[group[2](args)]?.[
-          group[3](args)
-        ]?.[group[4](args)]?.[group[5](args)]?.[group[6](args)]?.[
-          group[7](args)
-        ]?.[group[8](args)]?.[group[9](args)] || EMPTY_ARRAY;
+        data
+          .get(group[0](args))
+          ?.get(group[1](args))
+          ?.get(group[2](args))
+          ?.get(group[3](args))
+          ?.get(group[4](args))
+          ?.get(group[5](args))
+          ?.get(group[6](args))
+          ?.get(group[7](args))
+          ?.get(group[8](args))
+          ?.get(group[9](args)) || EMPTY_ARRAY;
     default:
       throw new Error("Not implemented");
   }
@@ -140,10 +206,22 @@ function getJoinAndTransform(
     | undefined,
   transformation,
   idKey: string,
-  normalizedCollections: { [collection: string]: Map<string | number, any> }
+  normalizedCollections: Map<string, Map<string | number, any>>
 ): (item: any) => any {
   if (!joins || joins.length === 0) {
     if (transformation) {
+      if (idKey === "__proto__") {
+        return (item) => {
+          const newItem = transformation!(item);
+          Object.defineProperty(newItem, idKey, {
+            writable: true,
+            enumerable: true,
+            configurable: true,
+            value: item[idKey],
+          });
+          return newItem;
+        };
+      }
       return (item) => ({
         ...transformation!(item),
         [idKey]: item[idKey],
@@ -153,6 +231,24 @@ function getJoinAndTransform(
   }
 
   if (transformation) {
+    if (idKey === "__proto__") {
+      return (item) => {
+        const result = { ...item };
+        for (const join of joins) {
+          if (item[join.key]) {
+            executeJoin(item, result, join, normalizedCollections);
+          }
+        }
+        const newItem = transformation!(item);
+        Object.defineProperty(newItem, idKey, {
+          writable: true,
+          enumerable: true,
+          configurable: true,
+          value: item[idKey],
+        });
+        return newItem;
+      };
+    }
     return (item) => {
       const result = { ...item };
       for (const join of joins) {
@@ -180,12 +276,12 @@ function getJoinAndTransform(
 function executeJoin(item, result, join, normalizedCollections) {
   if (Array.isArray(item[join.key])) {
     result[join.key] = item[join.key].map((id) =>
-      normalizedCollections[join.collection].get(id)
+      normalizedCollections.get(join.collection).get(id)
     );
   } else {
-    result[join.key] = normalizedCollections[join.collection].get(
-      item[join.key]
-    );
+    result[join.key] = normalizedCollections
+      .get(join.collection)
+      .get(item[join.key]);
   }
 }
 
