@@ -58,7 +58,7 @@ const fullFilled = ordersByCustomerAndStatus("customer1", "FullFilled");
 
 ## Update data
 
-You can update one or multiple collections with one update call. You can update your collections as often as you want to. Your views will automatically return updated data. If the objects have not changed in value, the returned array will be **reference equal** to the previously returned array. That makes it perfect for use with React to help avoid unnecessary rerenders.
+You can update one or multiple collections with one update call. You can update your collections as often as you want to. Your views will automatically return updated data when called. If the objects have not changed in value, the returned array will be **reference equal** to the previously returned array. That makes it perfect for use with React to help avoid unnecessary rerenders.
 
 ```js
 const cruncher = new Cruncher();

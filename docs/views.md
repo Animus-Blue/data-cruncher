@@ -38,10 +38,10 @@ const myOrders = ordersByCustomerStatusPremium(
 );
 ```
 
-Keep your views and share them throughout your app wherever they are needed. You can specify up to ten properties.
+Keep your views and share them throughout your app wherever they are needed. You can specify up to ten properties when calling the by method.
 It's ok if some of the properties of your view are optional. If any objects in the collection have null or undefined values for those properties they are simply ignored by the view.
 
-You cannot use an id as a property. If you want to query objects by id use [byId](./byId.md) instead.
+You cannot use an id as a property with the by method. If you want to query objects by id use [byId](./byId.md) instead.
 
 ## Joins
 
@@ -69,7 +69,7 @@ const customers = [
 ];
 ```
 
-you can create a join by passing in the collection name you have used when adding the collection and the property to the reference:
+you can create a join by passing in the collection name you have used when adding the collection and the property with the reference:
 
 ```js
 const cruncher = new Cruncher();
@@ -171,7 +171,7 @@ If your transformation function throws an error this error might be thrown when 
 
 ## Groupings
 
-You can group the values fo your properties. Hand in the name of the property you want to group and a grouping function that:
+You can group the values for your properties. Hand in the name of the property you want to group and a grouping function that:
 
 - accepts the objects value for the property
 - is a pure function (always returns the same output for the same input)

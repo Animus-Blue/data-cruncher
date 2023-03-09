@@ -243,7 +243,7 @@ test("changed references correctly when swapping on update", () => {
   expect(TestUtils.getInternalSize(cruncher, "students")).toBe(5);
 });
 
-test("ignores null or undefined values need for view", () => {
+test("ignores null or undefined values needed for view", () => {
   const cruncher = new Cruncher();
   cruncher.addCollection("students", "id", students4);
   const studentsByAgeAndName = cruncher
@@ -273,7 +273,7 @@ test("ignores null or undefined values need for view", () => {
   expect(studentsByAgeAndName(undefined as any, "Maria")).toEqual([]);
 });
 
-test("ignores null or undefined values need for view when adding values", () => {
+test("ignores null or undefined values needed for view when adding values", () => {
   const cruncher = new Cruncher();
   cruncher.addCollection("students", "id", students1);
   const studentsByAgeAndName = cruncher
@@ -304,7 +304,7 @@ test("ignores null or undefined values need for view when adding values", () => 
   expect(studentsByAgeAndName(undefined as any, "Maria")).toEqual([]);
 });
 
-test("ignores null or undefined values need for view when deleting values", () => {
+test("ignores null or undefined values needed for view when deleting values", () => {
   const cruncher = new Cruncher();
   cruncher.addCollection("students", "id", students1);
   const studentsByAgeAndName = cruncher
@@ -336,7 +336,7 @@ test("ignores null or undefined values need for view when deleting values", () =
   ]);
 });
 
-test("ignores null or undefined values need for view when adding values", () => {
+test("ignores null or undefined values needed for view when adding values", () => {
   const cruncher = new Cruncher();
   cruncher.addCollection("students", "id", students1);
   const studentsByAgeAndName = cruncher

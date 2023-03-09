@@ -109,7 +109,7 @@ You can query objects by id and use joins and transformations just like with vie
 
 ## Supported data types
 
-data-cruncher can be used for JavaScript objects (including deeply nested objects) with primitive properties and arrays out of the box. These are the kind of objects you usually get after deserializing objects from a database or from network calls.
+data-cruncher can be used for JavaScript objects (including deeply nested objects) with properties of primitives and arrays out of the box. These are the kind of objects you usually get after deserializing objects from a database or from network calls.
 
 example:
 
