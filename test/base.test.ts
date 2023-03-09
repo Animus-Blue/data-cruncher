@@ -1,6 +1,6 @@
 import Cruncher from "../src/index";
 import {
-  manyKeys,
+  manyProperties,
   students1,
   students2,
   students3,
@@ -40,7 +40,7 @@ test("returns correct view", () => {
   expect(TestUtils.getInternalSize(cruncher, "students")).toBe(6);
 });
 
-test("throws an error when adding a view with the id as key", () => {
+test("throws an error when adding a view with the id as property", () => {
   const cruncher = new Cruncher();
   cruncher.addCollection("students", "id", students1);
   expect(() => cruncher.view("students").by("age", "name", "id").get()).toThrow(
@@ -476,7 +476,7 @@ test("getById returns correct items after update - reference check", () => {
 
 test("can get view with up to ten keys", () => {
   const cruncher = new Cruncher();
-  cruncher.addCollection("collection1", "id", manyKeys);
+  cruncher.addCollection("collection1", "id", manyProperties);
   const keysAndValues1 = [
     { key: "prop1", value: "value prop 1" },
     { key: "prop2", value: "value prop 2" },
@@ -667,7 +667,7 @@ test("can do views on booleans", () => {
   expect(TestUtils.getInternalSize(cruncher, "students")).toBe(6);
 });
 
-test("returns identical view if it has been created before with collection and keys", () => {
+test("returns identical view if it has been created before with collection and properties", () => {
   const cruncher = new Cruncher();
   cruncher.addCollection("students", "id", students1);
   cruncher.addCollection("students2", "id", students1);

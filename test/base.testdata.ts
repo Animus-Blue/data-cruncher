@@ -51,7 +51,7 @@ const students5: Student[] = [
   { id: "7", name: "Jacky", age: 24, otherProp: "other" },
 ];
 
-const manyKeys: any[] = [
+const manyProperties: any[] = [
   {
     id: "1",
     prop1: "value prop 1",
@@ -118,5 +118,5 @@ export {
   students5,
   studentsWithHappiness1,
   studentsWithHappiness2,
-  manyKeys,
+  manyProperties,
 };

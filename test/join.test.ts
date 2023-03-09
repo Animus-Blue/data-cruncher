@@ -399,7 +399,7 @@ test("does not crash with joins and transformation when ids change", () => {
   expect(TestUtils.getInternalSize(cruncher, "schools")).toBe(3);
 });
 
-test("does not track foreign keys with null or undefined values", () => {
+test("does not track foreign properties with null or undefined values", () => {
   const cruncher = new Cruncher();
   cruncher.addCollection("students", "id", students2);
   cruncher.addCollection("schools", "id", schools1);
@@ -509,7 +509,7 @@ test("does not track foreign keys with null or undefined values", () => {
   ).toBe(true);
 });
 
-test("does not track foreign keys with null or undefined values -v2 with transformation", () => {
+test("does not track foreign properties with null or undefined values -v2 with transformation", () => {
   const cruncher = new Cruncher();
   cruncher.addCollection("students", "id", students2);
   cruncher.addCollection("schools", "id", schools1);
@@ -603,7 +603,7 @@ test("does not track foreign keys with null or undefined values -v2 with transfo
   ).toBe(true);
 });
 
-test("does track foreign keys even when reference objects are undefined", () => {
+test("does track foreign properties even when reference objects are undefined", () => {
   const cruncher = new Cruncher();
   cruncher.addCollection("students", "id", students1);
   cruncher.addCollection("schools", "id", schools3);
