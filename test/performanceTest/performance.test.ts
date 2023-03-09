@@ -1,4 +1,4 @@
-import Cruncher from "../cruncher/index";
+import Cruncher from "../../src/cruncher/index";
 import tasks from "./tasks.json";
 import tasksDiff6 from "./tasksDiff6.json";
 import tasksDiff30 from "./tasksDiff30.json";
@@ -8,7 +8,7 @@ import workStations from "./workStations.json";
 import workStationsDiff50Percent from "./workStationsDiff50Percent.json";
 import departments from "./departments.json";
 import employees from "./employees.json";
-import { TestUtils } from "../cruncher/testutils";
+import { TestUtils } from "../testutils";
 
 function dateToMonth(date) {
   const d = new Date(date);

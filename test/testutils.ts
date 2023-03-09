@@ -1,4 +1,4 @@
-import Cruncher from ".";
+import Cruncher from "../src/cruncher";
 
 const TestUtils = {
   getReferences: (

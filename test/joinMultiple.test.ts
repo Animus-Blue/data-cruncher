@@ -1,5 +1,5 @@
-import Cruncher from ".";
-import equal from "../transformations/equal";
+import Cruncher from "../src/cruncher";
+import equal from "../src/transformations/equal";
 import {
   schools1,
   schools2,
@@ -7,7 +7,7 @@ import {
   teachers1,
   teachers2,
   teachers3,
-} from "./index.joinMultiple.testdata";
+} from "./joinMultiple.testdata";
 import { TestUtils } from "./testutils";
 
 test("returns correct views with multiple joins to the same collection", () => {

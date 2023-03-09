@@ -1,5 +1,5 @@
-import Cruncher from ".";
-import equal from "../transformations/equal";
+import Cruncher from "../src/cruncher";
+import equal from "../src/transformations/equal";
 import {
   students1,
   students2,
@@ -14,7 +14,7 @@ import {
   teachers1,
   teachers2,
   teachers3,
-} from "./index.join.testdata";
+} from "./join.testdata";
 import { TestUtils } from "./testutils";
 
 test("returns correct views", () => {

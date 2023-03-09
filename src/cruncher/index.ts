@@ -9,6 +9,8 @@ import {
 import equal from "../transformations/equal";
 import { getAlreadyPresentViews } from "./verifyViews";
 
+export type Value = string | number | boolean;
+
 export interface Join {
   collection: string;
   key: string;
@@ -16,7 +18,7 @@ export interface Join {
 
 export interface Grouping {
   key: string;
-  groupingFunction: (value: string | number) => string | number;
+  groupingFunction: (value: Value) => Value;
   useGroupsAsParameter: boolean;
 }
 
@@ -41,15 +43,15 @@ interface View {
   groupings?: Grouping[];
   joins?: Join[];
   joinAndTransform: (item: any) => any;
-  keys: (string | number)[];
-  data: Map<string, any>;
-  getPath: (item: any) => (string | number)[] | null;
-  view: (...args: (string | number | boolean)[]) => any;
+  keys: Value[];
+  data: Map<Value, any>;
+  getPath: (item: any) => Value[] | null;
+  view: (...args: Value[]) => any;
 }
 
 class Cruncher {
   private views: View[] = [];
-  private normalizedCollections: Map<string, Map<string | number, any>>;
+  private normalizedCollections: Map<string, Map<Value, any>>;
   private collections: Map<string, { idKey: string; data: any[] }>;
   private references: Map<string, Map<string, Map<string, Map<string, true>>>>;
 
@@ -60,7 +62,7 @@ class Cruncher {
   }
 
   public addCollection(name: string, idKey: string, data?: any[]): void {
-    const normalizedCollection = new Map<string, any>();
+    const normalizedCollection = new Map<Value, any>();
     data?.forEach((t) => normalizedCollection.set(t[idKey], t));
     this.normalizedCollections.set(name, normalizedCollection);
     if (this.normalizedCollections.get(name)?.get(undefined as any)) {
@@ -72,11 +74,11 @@ class Cruncher {
     });
   }
 
-  private getView<K extends (string | number)[]>(
+  private getView<K extends Value[]>(
     options: ViewOptions
   ): (
     ...args: {
-      [Property in keyof K]: string | number | boolean;
+      [Property in keyof K]: Value;
     }
   ) => any[] {
     const alreadyPresentViews = getAlreadyPresentViews(this.views, options);
@@ -105,20 +107,22 @@ class Cruncher {
       }
     }
 
-    const pathToGroup = {};
+    const pathToGroup: {
+      [key: string]: (value: Value) => Value | undefined | null;
+    } = {};
     options.groupings?.forEach((grouping) => {
-      const cache = {};
+      const cache: Map<Value, Value> = new Map();
       pathToGroup[grouping.key] = (value) => {
         if (value === null || value === undefined) {
           return value;
         }
-        if (!cache[value]) {
-          cache[value] = grouping.groupingFunction(value);
+        if (!cache.has(value)) {
+          cache.set(value, grouping.groupingFunction(value));
         }
-        return cache[value];
+        return cache.get(value);
       };
     });
-    const getPath: (item: any) => (string | number)[] | null = getPathGetter(
+    const getPath: (item: any) => Value[] | null = getPathGetter(
       keys,
       options.groupings,
       pathToGroup
@@ -129,14 +133,14 @@ class Cruncher {
       idKey as string,
       this.normalizedCollections
     );
-    const data: Map<string, any> = new Map();
+    const data: Map<Value, any> = new Map();
     group(
       data,
       this.collections.get(options.collection)!.data,
       joinAndTransform,
       getPath
     );
-    let view: (...args: (string | number | boolean)[]) => any;
+    let view: (...args: Value[]) => any;
     const argumentToGroupsMap = {};
     options.groupings?.forEach((grouping) => {
       if (!grouping.useGroupsAsParameter) {
@@ -144,18 +148,14 @@ class Cruncher {
       }
     });
     if (options.returnSingleItemWithoutGrouping) {
-      view = getSingleItemGetter(data, keys) as (
-        ...args: (string | number | boolean)[]
-      ) => any;
+      view = getSingleItemGetter(data, keys) as (...args: Value[]) => any;
     } else {
       if (Object.keys(argumentToGroupsMap).length > 0) {
         view = getGetterWithGrouping(data, keys, argumentToGroupsMap) as (
-          ...args: (string | number | boolean)[]
+          ...args: Value[]
         ) => any[];
       } else {
-        view = getGetter(data, keys) as (
-          ...args: (string | number | boolean)[]
-        ) => any[];
+        view = getGetter(data, keys);
       }
     }
     const newView: View = {
@@ -361,7 +361,7 @@ class Cruncher {
         }
 
         // Handle own Collection
-        const deleted: Map<string | number, any> = new Map();
+        const deleted: Map<Value, any> = new Map();
         if (ownMutation) {
           for (const t of ownMutation.deleted) {
             toBeCheckedForChanges.delete(t[ownIdKey]);
@@ -370,8 +370,8 @@ class Cruncher {
               collectMutationsRecursively(deleted, path, t, t[ownIdKey]);
             }
           }
-          const added: Map<string | number, any> = new Map();
-          const edited: Map<string | number, any> = new Map();
+          const added: Map<Value, any> = new Map();
+          const edited: Map<Value, any> = new Map();
           for (const t of ownMutation.edited) {
             const prevPath = view.getPath(t.prev);
             const updatedPath = view.getPath(t.updated);
@@ -444,7 +444,7 @@ class Cruncher {
         }
 
         // Go through all items that might have changed
-        const mutatedTs: Map<string | number, any> = new Map();
+        const mutatedTs: Map<Value, any> = new Map();
         for (const id of toBeCheckedForChanges.keys()) {
           const t = this.normalizedCollections.get(view.collection)!.get(id);
           const path = view.getPath(t);
@@ -478,7 +478,7 @@ class Cruncher {
           return this.getView(options);
         };
 
-        const join = (collection, key) => {
+        const join = (collection: string, key: string) => {
           options.joins = [...(options.joins || []), { collection, key }];
           return builder;
         };
@@ -490,7 +490,7 @@ class Cruncher {
 
         const group = (
           key: string,
-          groupingFunction: (value: string | number) => string | number,
+          groupingFunction: (valueOfProp: Value) => Value,
           useGroupsAsParameter: boolean = true
         ) => {
           options.groupings = [
@@ -519,11 +519,11 @@ class Cruncher {
       returnSingleItemWithoutGrouping: true,
     };
 
-    const get = (): ((id: string | number) => any) => {
+    const get = (): ((id: string | number | boolean) => any) => {
       return this.getView(options);
     };
 
-    const join = (collection, key) => {
+    const join = (collection: string, key: string) => {
       options.joins = [...(options.joins || []), { collection, key }];
       return builder;
     };
@@ -604,11 +604,7 @@ function deleteSingleReference(
   }
 }
 
-function mutateIfChanged(
-  joinAndtransform,
-  data: Map<string | number, any>,
-  ownIdKey
-) {
+function mutateIfChanged(joinAndtransform, data: Map<Value, any>, ownIdKey) {
   return function (keysAndTs, path) {
     const obj = getObjectAtLevel(data, path, 1);
     let updated: number = 0;
@@ -633,7 +629,7 @@ function mutateIfChanged(
   };
 }
 
-function getObjectAtLevel(data: Map<string | number, any>, path, targetLevel) {
+function getObjectAtLevel(data: Map<Value, any>, path, targetLevel) {
   if (path.length === targetLevel) {
     return data;
   }
@@ -641,7 +637,7 @@ function getObjectAtLevel(data: Map<string | number, any>, path, targetLevel) {
 }
 
 function addRecursivelyAll(
-  data: Map<string | number, any>,
+  data: Map<Value, any>,
   path: string[],
   value: any[]
 ) {
@@ -660,9 +656,9 @@ function addRecursivelyAll(
 }
 
 function deleteRecursivelyAll(
-  data: Map<string | number, any>,
+  data: Map<Value, any>,
   path: string[],
-  values: Map<string | number, any>,
+  values: Map<Value, any>,
   idKey
 ) {
   if (path.length === 1) {
@@ -694,8 +690,8 @@ function deleteRecursivelyAll(
 }
 
 function collectMutationsRecursively(
-  data: Map<string | number, any>,
-  path: (string | number)[],
+  data: Map<Value, any>,
+  path: Value[],
   value: any,
   id: string
 ) {

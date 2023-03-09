@@ -4,7 +4,7 @@
 
 views are functions that return arrays of the data you search for.
 
-To create a view you have to specify the collection and keys. Say you have data on orders that look like this:
+To create a view you have to specify the collection and keys to some properties. Say you have data on orders that look like this:
 
 ```js
 const orders = [
@@ -13,33 +13,35 @@ const orders = [
     customer: "customer1",
     status: "InProgress",
     shipment: "standard",
+    total: 45.6,
+    premium: false,
   },
   ...
 ];
 ```
 
-You can create views on these objects keys (customer, status, shipment):
+You can create views on these objects. You can specify all keys of properties which have string, number or boolean values (in this example: customer, status, shipment, total, premium):
 
 ```js
 const cruncher = new Cruncher();
 cruncher.addCollection("orders", "id", orders);
 
-const ordersByCustomerStatusShipment = cruncher
+const ordersByCustomerStatusPremium = cruncher
   .view("orders")
-  .keys("customer", "status", "shipment")
+  .keys("customer", "status", "premium")
   .get();
 
-const myOrders = ordersByCustomerStatusShipment(
+const myOrders = ordersByCustomerStatusPremium(
   "customer1",
   "InProgress",
-  "standard"
+  false
 );
 ```
 
 Keep your views and share them throughout your app wherever they are needed. Your views can have up to ten keys.
 It's ok if some of the keys of your view are optional. If any objects in the collection have null or undefined values for those keys they are simply ignored by the view.
 
-You cannot use an id as a view key. If you want to query objects by id use [byId](./byId.md) instead.
+You cannot use an id as a key. If you want to query objects by id use [byId](./byId.md) instead.
 
 ## Joins
 
@@ -67,7 +69,7 @@ const customers = [
 ];
 ```
 
-you can create a join by passing in the collection name you have used when adding the collection and the key of the reference:
+you can create a join by passing in the collection name you have used when adding the collection and the key to the reference:
 
 ```js
 const cruncher = new Cruncher();

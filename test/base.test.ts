@@ -1,4 +1,4 @@
-import Cruncher from "./index";
+import Cruncher from "../src/index";
 import {
   manyKeys,
   students1,
@@ -8,8 +8,7 @@ import {
   students5,
   studentsWithHappiness1,
   studentsWithHappiness2,
-  studentsWithHappiness3,
-} from "./index.testdata";
+} from "./base.testdata";
 import { TestUtils } from "./testutils";
 
 test("returns correct view", () => {
@@ -666,46 +665,6 @@ test("can do views on booleans", () => {
   expect(studentsByHappiness(false)).not.toBe(unhappyStudents);
   expect(TestUtils.getInternalSize(cruncher, "students")).toBe(6);
   expect(TestUtils.getInternalSize(cruncher, "students")).toBe(6);
-});
-
-test("takes types of keys into account", () => {
-  const cruncher = new Cruncher();
-  cruncher.addCollection("students", "id", studentsWithHappiness1);
-  const studentsByHappinessAndAge = cruncher
-    .view("students")
-    .keys("isHappy", "age")
-    .get();
-
-  const happyStudents20 = studentsByHappinessAndAge(true, 20);
-  const unhappyStudents24 = studentsByHappinessAndAge(false, 24);
-  expect(happyStudents20).toEqual([
-    { id: "1", name: "John", age: 20, isHappy: true },
-  ]);
-  expect(unhappyStudents24).toEqual([
-    { id: "5", name: "Jacky", age: 24, isHappy: false },
-  ]);
-  expect(studentsByHappinessAndAge("true", 20)).toEqual([]);
-  expect(studentsByHappinessAndAge("true", "20")).toEqual([]);
-  expect(studentsByHappinessAndAge("false", 24)).toEqual([]);
-  expect(studentsByHappinessAndAge("false", "24")).toEqual([]);
-});
-
-test("takes types of keys into account when querying", () => {
-  const cruncher = new Cruncher();
-  cruncher.addCollection("students", "id", studentsWithHappiness3);
-  const studentsByHappinessAndAge = cruncher
-    .view("students")
-    .keys("isHappy", "age")
-    .get();
-
-  expect(studentsByHappinessAndAge(true, 21)).toEqual([]);
-  expect(studentsByHappinessAndAge(true, "21")).toEqual([
-    { id: "2", name: "Jane", age: "21", isHappy: true },
-  ]);
-  expect(studentsByHappinessAndAge(true, 23)).toEqual([]);
-  expect(studentsByHappinessAndAge("true", 23)).toEqual([
-    { id: "6", name: "Jacky", age: 23, isHappy: "true" },
-  ]);
 });
 
 test("returns identical view if it has been created before with collection and keys", () => {

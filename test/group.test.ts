@@ -1,4 +1,4 @@
-import Cruncher from ".";
+import Cruncher from "../src/cruncher";
 import {
   items,
   items2,
@@ -7,7 +7,7 @@ import {
   players3,
   players4,
   players5,
-} from "./index.group.testdata";
+} from "./group.testdata";
 import { TestUtils } from "./testutils";
 
 test("returns correct views with joins, groupings and transformation", () => {

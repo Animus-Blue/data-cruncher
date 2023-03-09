@@ -1,3 +1,5 @@
+import { Value } from "../cruncher";
+
 type UnwrapArray<T extends [...any[]]> = T extends [infer Head, ...infer Tail]
   ? [Head, ...UnwrapArray<Tail>]
   : [];
@@ -13,7 +15,7 @@ export type Grouping<
   : undefined | S[];
 
 function group<T extends { [key: string]: any }, K extends Array<keyof T>, S>(
-  data: Map<string, any>,
+  data: Map<Value, any>,
   array: T[],
   transformation: (item: T) => S,
   getPath
@@ -26,7 +28,7 @@ function group<T extends { [key: string]: any }, K extends Array<keyof T>, S>(
   }
 }
 
-function addRecursively(data: Map<string, any>, path: string[], value: any) {
+function addRecursively(data: Map<Value, any>, path: Value[], value: any) {
   if (path.length === 1) {
     if (!data.has(path[0])) {
       data.set(path[0], [value]);

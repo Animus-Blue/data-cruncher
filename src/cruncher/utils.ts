@@ -1,9 +1,11 @@
+import { Value } from ".";
+
 const EMPTY_ARRAY = [];
 
 function getSingleItemGetter(
-  data: Map<string | number, any>,
-  keys: (string | number)[]
-): (...args: (string | number)[]) => any {
+  data: Map<Value, any>,
+  keys: string[]
+): (...args: Value[]) => any {
   switch (keys.length) {
     case 0:
       return (...args) => data[0];
@@ -15,9 +17,9 @@ function getSingleItemGetter(
 }
 
 function getGetter(
-  data: Map<string | number, any>,
-  keys: (string | number)[]
-): (...args: (string | number)[]) => any[] {
+  data: Map<Value, any>,
+  keys: string[]
+): (...args: Value[]) => any[] {
   switch (keys.length) {
     case 1:
       return (...args) => data.get(args[0]) || EMPTY_ARRAY;
@@ -100,11 +102,11 @@ function getGetter(
 
 function getGetterWithGrouping(
   data: any,
-  keys: (string | number)[],
+  keys: string[],
   argumentToGroupsMap: {
-    [key: string]: (arg: string | number) => string | number;
+    [key: string]: (arg: Value) => Value;
   }
-): (...args: (string | number)[]) => any[] {
+): (...args: Value[]) => any[] {
   const group = keys.map((key, index) =>
     argumentToGroupsMap[key]
       ? (arg) => argumentToGroupsMap[key](arg[index])
@@ -206,7 +208,7 @@ function getJoinAndTransform(
     | undefined,
   transformation,
   idKey: string,
-  normalizedCollections: Map<string, Map<string | number, any>>
+  normalizedCollections: Map<string, Map<Value, any>>
 ): (item: any) => any {
   if (!joins || joins.length === 0) {
     if (transformation) {
@@ -286,13 +288,13 @@ function executeJoin(item, result, join, normalizedCollections) {
 }
 
 function getPathGetter(
-  keys,
+  keys: string[],
   groupings,
-  pathToGroup: { [key: string]: (arg: string | number) => string | number }
-): (item: any) => (string | number)[] | null {
+  pathToGroup: { [key: string]: (value: Value) => Value | undefined | null }
+): (item: any) => Value[] | null {
   if (!groupings) {
     return (item: any) => {
-      const path: (string | number)[] = [];
+      const path: Value[] = [];
       for (const key of keys) {
         const pathItem = item[key];
         if (pathItem === null || pathItem === undefined) {
@@ -304,7 +306,7 @@ function getPathGetter(
     };
   }
   return (item: any) => {
-    const path: (string | number)[] = [];
+    const path: Value[] = [];
     for (const key of keys) {
       const pathItem = pathToGroup[key]
         ? pathToGroup[key](item[key])

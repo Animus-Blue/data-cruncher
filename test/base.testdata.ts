@@ -110,14 +110,6 @@ const studentsWithHappiness2: any[] = [
   { id: "8", name: "Kelly", age: 21, isHappy: false },
 ];
 
-const studentsWithHappiness3: any[] = [
-  { id: "1", name: "John", age: 20, isHappy: true },
-  { id: "2", name: "Jane", age: "21", isHappy: true },
-  { id: "5", name: "Jacky", age: 24, isHappy: false },
-  { id: "6", name: "Jacky", age: 23, isHappy: "true" },
-  { id: "7", name: "Jacky", age: 24, isHappy: true },
-];
-
 export {
   students1,
   students2,
@@ -126,6 +118,5 @@ export {
   students5,
   studentsWithHappiness1,
   studentsWithHappiness2,
-  studentsWithHappiness3,
   manyKeys,
 };

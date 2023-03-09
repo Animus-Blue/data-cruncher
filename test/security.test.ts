@@ -1,4 +1,4 @@
-import Cruncher from ".";
+import Cruncher from "../src/cruncher";
 
 test("cannot pollute prototype through keys", () => {
   const attack = [{ id: "1", name: "__proto__", street: "pollutedProp" }];
