@@ -10,7 +10,139 @@ test("cannot pollute prototype through keys", () => {
   expect(a.pollutedProp).toBe(undefined);
 });
 
+test("cannot pollute prototype through keys", () => {
+  const attack = [
+    {
+      id: "1",
+      name: "hans",
+      __proto__: { x: 42 },
+      "__proto__.x": "x",
+      street: "pollutedProp",
+    },
+  ];
+  const cruncher = new Cruncher();
+  cruncher.addCollection("people", "id", attack);
+  cruncher.addCollection("people2", "__proto__", attack);
+  const peopleByName = cruncher.view("people").keys("name", "street").get();
+  const peopleByName2 = cruncher.view("people").keys("__proto__", "name").get();
+  const peopleByName3 = cruncher
+    .view("people")
+    .keys("__proto__.x", "name")
+    .get();
+  const peopleByName4 = cruncher.view("people2").keys("name", "street").get();
+  const peopleByName5 = cruncher.view("people2").keys("id", "name").get();
+  const peopleByName6 = cruncher
+    .view("people2")
+    .keys("__proto__.x", "name")
+    .get();
+  const a: any = {};
+  expect(a.pollutedProp).toBe(undefined);
+  expect(a.name).toBe(undefined);
+  expect(a.id).toBe(undefined);
+  expect(a.street).toBe(undefined);
+  expect(a.x).toBe(undefined);
+  expect(a.hans).toBe(undefined);
+});
+
 test("cannot pollute prototype through keys when initializing data later", () => {
+  const attack = [
+    {
+      id: "1",
+      name: "hans",
+      __proto__: { x: 42 },
+      "__proto__.x": "x",
+      street: "pollutedProp",
+    },
+  ];
+  const cruncher = new Cruncher();
+  cruncher.addCollection("people", "id", []);
+  cruncher.addCollection("people2", "__proto__", []);
+  const peopleByName = cruncher.view("people").keys("name", "street").get();
+  const peopleByName2 = cruncher.view("people").keys("__proto__", "name").get();
+  const peopleByName3 = cruncher
+    .view("people")
+    .keys("__proto__.x", "name")
+    .get();
+  const peopleByName4 = cruncher.view("people2").keys("name", "street").get();
+  const peopleByName5 = cruncher.view("people2").keys("id", "name").get();
+  const peopleByName6 = cruncher
+    .view("people2")
+    .keys("__proto__.x", "name")
+    .get();
+  cruncher.update([{ collection: "people", data: attack }]);
+  cruncher.update([{ collection: "people2", data: attack }]);
+  const a: any = {};
+  expect(a.pollutedProp).toBe(undefined);
+  expect(a.name).toBe(undefined);
+  expect(a.id).toBe(undefined);
+  expect(a.street).toBe(undefined);
+  expect(a.x).toBe(undefined);
+  expect(a.hans).toBe(undefined);
+});
+
+test("cannot pollute prototype through keys when updating", () => {
+  const attack = [
+    {
+      id: "1",
+      name: "hans",
+      __proto__: { x: 42 },
+      "__proto__.x": "x",
+      street: "pollutedProp",
+    },
+    {
+      id: "2",
+      name: "hans",
+      __proto__: { x: 42 },
+      "__proto__.x": "x2",
+      street: "pollutedProp",
+    },
+  ];
+  const attack2 = [
+    {
+      id: "1",
+      name: "hans2",
+      __proto__: { x: 42 },
+      "__proto__.x": "x",
+      street: "pollutedProp",
+    },
+    {
+      id: "3",
+      name: "hans",
+      __proto__: { x: 42 },
+      "__proto__.x": "x3",
+      street: "pollutedProp",
+    },
+  ];
+  const cruncher = new Cruncher();
+  cruncher.addCollection("people", "id", attack);
+  cruncher.addCollection("people2", "__proto__", attack);
+  const peopleByName = cruncher.view("people").keys("name", "street").get();
+  const peopleByName2 = cruncher.view("people").keys("__proto__", "name").get();
+  const peopleByName3 = cruncher
+    .view("people")
+    .keys("__proto__.x", "name")
+    .get();
+  const peopleByName4 = cruncher.view("people2").keys("name", "street").get();
+  const peopleByName5 = cruncher.view("people2").keys("id", "name").get();
+  const peopleByName6 = cruncher
+    .view("people2")
+    .keys("__proto__.x", "name")
+    .get();
+  cruncher.update([{ collection: "people", data: attack2 }]);
+  cruncher.update([{ collection: "people2", data: attack2 }]);
+  const a: any = {};
+  expect(a.pollutedProp).toBe(undefined);
+  expect(a.name).toBe(undefined);
+  expect(a.id).toBe(undefined);
+  expect(a.street).toBe(undefined);
+  expect(a.x).toBe(undefined);
+  expect(a.x2).toBe(undefined);
+  expect(a.x3).toBe(undefined);
+  expect(a.hans).toBe(undefined);
+  expect(a.hans2).toBe(undefined);
+});
+
+test("cannot pollute prototype through value when initializing data later", () => {
   const attack = [{ id: "1", name: "__proto__", street: "pollutedProp" }];
   const cruncher = new Cruncher();
   cruncher.addCollection("people", "id", []);
@@ -21,7 +153,7 @@ test("cannot pollute prototype through keys when initializing data later", () =>
   expect(a.pollutedProp).toBe(undefined);
 });
 
-test("cannot pollute prototype through keys when adding data", () => {
+test("cannot pollute prototype through values when adding data", () => {
   const clean = [{ id: "1", name: "Hans", street: "Street 1" }];
   const attack = [
     { id: "1", name: "Hans", street: "Street 1" },
