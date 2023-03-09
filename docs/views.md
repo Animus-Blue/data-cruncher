@@ -4,7 +4,7 @@
 
 views are functions that return arrays of the data you search for.
 
-To create a view you have to specify the collection and keys to some properties. Say you have data on orders that look like this:
+To create a view you have to specify the collection and the properties you want to query them by. Say you have data on orders that look like this:
 
 ```js
 const orders = [
@@ -20,7 +20,7 @@ const orders = [
 ];
 ```
 
-You can create views on these objects. You can specify all keys of properties which have string, number or boolean values (in this example: customer, status, shipment, total, premium):
+You can create views on these objects. You can pass all properties which have string, number or boolean values to the by method (in this example: customer, status, shipment, total, premium):
 
 ```js
 const cruncher = new Cruncher();
@@ -28,7 +28,7 @@ cruncher.addCollection("orders", "id", orders);
 
 const ordersByCustomerStatusPremium = cruncher
   .view("orders")
-  .keys("customer", "status", "premium")
+  .by("customer", "status", "premium")
   .get();
 
 const myOrders = ordersByCustomerStatusPremium(
@@ -38,10 +38,10 @@ const myOrders = ordersByCustomerStatusPremium(
 );
 ```
 
-Keep your views and share them throughout your app wherever they are needed. Your views can have up to ten keys.
-It's ok if some of the keys of your view are optional. If any objects in the collection have null or undefined values for those keys they are simply ignored by the view.
+Keep your views and share them throughout your app wherever they are needed. You can specify up to ten properties.
+It's ok if some of the properties of your view are optional. If any objects in the collection have null or undefined values for those properties they are simply ignored by the view.
 
-You cannot use an id as a key. If you want to query objects by id use [byId](./byId.md) instead.
+You cannot use an id as a property. If you want to query objects by id use [byId](./byId.md) instead.
 
 ## Joins
 
@@ -69,7 +69,7 @@ const customers = [
 ];
 ```
 
-you can create a join by passing in the collection name you have used when adding the collection and the key to the reference:
+you can create a join by passing in the collection name you have used when adding the collection and the property to the reference:
 
 ```js
 const cruncher = new Cruncher();
@@ -78,7 +78,7 @@ cruncher.addCollection("customers", "id", customers);
 
 const ordersByCustomerStatusShipment = cruncher
   .view("orders")
-  .keys("customer", "status", "shipment")
+  .by("customer", "status", "shipment")
   .join("customers", "customer")
   .get();
 
@@ -136,7 +136,7 @@ cruncher.addCollection("products", "id", products);
 
 const ordersByCustomerStatusShipment = cruncher
   .view("orders")
-  .keys("customer", "status", "shipment")
+  .by("customer", "status", "shipment")
   .join("customers", "customer")
   .join("products", "products")
   .get();
@@ -157,7 +157,7 @@ cruncher.addCollection("customers", "id", customers);
 
 const ordersByCustomerAndStatus = cruncher
   .view("orders")
-  .keys("customer", "status")
+  .by("customer", "status")
   .join("customers", "customer")
   .transform((order) => ({ ...order, customer: order.customer?.name }))
   .get();
@@ -167,13 +167,13 @@ const fullFilled = ordersByCustomerAndStatus("customer1", "FullFilled");
 
 Transformations will always feed the id into the resulting object, even if your transformation function returns an object without the id.
 
-If your transformation function throws an error creating the view or performing updates might fail and the error will be thrown.
+If your transformation function throws an error this error might be thrown when creating the view or performing updates.
 
 ## Groupings
 
-You can group keys of your views. Hand in the name of the key you want to group and a grouping function that:
+You can group the values fo your properties. Hand in the name of the property you want to group and a grouping function that:
 
-- accepts the objects value for the key
+- accepts the objects value for the property
 - is a pure function (always returns the same output for the same input)
 - returns a string, number or boolean
 
@@ -193,7 +193,7 @@ const scoreToGroups = (score) => {
 
 const playersByLeagueAndScoreGroup = cruncher
   .view("players")
-  .keys("league", "score")
+  .by("league", "score")
   .group("score", scoreToGroups)
   .get();
 
@@ -208,11 +208,11 @@ If you want to query your objects by the original value instead of the group val
 ```js
 const playersByLeagueAndScoreGroup = cruncher
   .view("players")
-  .keys("league", "score")
+  .by("league", "score")
   .group("score", scoreToGroups, false)
   .get();
 
 const midLevelRegionalPlayers = playersByLeagueAndScoreGroup("regional", 30);
 ```
 
-If your grouping function throws an error creating the view or performing updates might fail and the error will be thrown.
+If your grouping function throws an error this error might be thrown when creating the view or performing updates.

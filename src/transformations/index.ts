@@ -5,16 +5,20 @@ type UnwrapArray<T extends [...any[]]> = T extends [infer Head, ...infer Tail]
   : [];
 
 export type Grouping<
-  T extends { [key: string]: any },
+  T extends { [property: string]: any },
   K extends Array<keyof T>,
   S
 > = K extends [infer Head, ...infer Tail]
   ? {
-      [key: string]: undefined | Grouping<T, UnwrapArray<Tail>, S>;
+      [property: string]: undefined | Grouping<T, UnwrapArray<Tail>, S>;
     }
   : undefined | S[];
 
-function group<T extends { [key: string]: any }, K extends Array<keyof T>, S>(
+function group<
+  T extends { [property: string]: any },
+  K extends Array<keyof T>,
+  S
+>(
   data: Map<Value, any>,
   array: T[],
   transformation: (item: T) => S,
@@ -43,18 +47,18 @@ function addRecursively(data: Map<Value, any>, path: Value[], value: any) {
   addRecursively(data.get(path[0]), path.slice(1), value);
 }
 
-function normalize(array: any, idKey: string) {
+function normalize(array: any, idProperty: string) {
   const result: any = {};
   for (const item of array) {
-    result[item[idKey]] = item;
+    result[item[idProperty]] = item;
   }
   return result;
 }
 
-function normalizeAfterProp(array: any, property: string, idKey: string) {
+function normalizeAfterProp(array: any, property: string, idProperty: string) {
   const result: any = {};
   for (const item of array) {
-    result[item[property][idKey]] = item;
+    result[item[property][idProperty]] = item;
   }
   return result;
 }

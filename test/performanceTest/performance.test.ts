@@ -24,32 +24,32 @@ test("performance test", () => {
 
   const tasksByEmployeeDateShiftNoJoins = cruncher
     .view("tasks")
-    .keys("employee", "date", "shift")
+    .by("employee", "date", "shift")
     .get();
   const tasksByEmployeeDateShift = cruncher
     .view("tasks")
-    .keys("employee", "date", "shift")
+    .by("employee", "date", "shift")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
     .get();
   const tasksByWorkstation = cruncher
     .view("tasks")
-    .keys("workStation")
+    .by("workStation")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
     .get();
   const tasksByEmployee = cruncher
     .view("tasks")
-    .keys("employee")
+    .by("employee")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
     .get();
   const tasksByDepartmentAndMonth = cruncher
     .view("tasks")
-    .keys("department", "date")
+    .by("department", "date")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
@@ -57,7 +57,7 @@ test("performance test", () => {
     .get();
   const tasksByTypeAndWorkstation = cruncher
     .view("tasks")
-    .keys("type", "workStation")
+    .by("type", "workStation")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
@@ -68,7 +68,7 @@ test("performance test", () => {
     .get();
   const tasksByDepartmentAndMonthTransformed = cruncher
     .view("tasks")
-    .keys("department", "date")
+    .by("department", "date")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
@@ -165,32 +165,32 @@ test("performance test", () => {
       .get();
     const tasksByEmployeeDateShiftNoJoins = cruncher
       .view("tasks")
-      .keys("employee", "date", "shift")
+      .by("employee", "date", "shift")
       .get();
     const tasksByEmployeeDateShift = cruncher
       .view("tasks")
-      .keys("employee", "date", "shift")
+      .by("employee", "date", "shift")
       .join("employees", "employee")
       .join("departments", "department")
       .join("workStations", "workStation")
       .get();
     const tasksByWorkstation = cruncher
       .view("tasks")
-      .keys("workStation")
+      .by("workStation")
       .join("employees", "employee")
       .join("departments", "department")
       .join("workStations", "workStation")
       .get();
     const tasksByEmployee = cruncher
       .view("tasks")
-      .keys("employee")
+      .by("employee")
       .join("employees", "employee")
       .join("departments", "department")
       .join("workStations", "workStation")
       .get();
     const tasksByDepartmentAndMonth = cruncher
       .view("tasks")
-      .keys("department", "date")
+      .by("department", "date")
       .join("employees", "employee")
       .join("departments", "department")
       .join("workStations", "workStation")
@@ -198,7 +198,7 @@ test("performance test", () => {
       .get();
     const tasksByTypeAndWorkstation = cruncher
       .view("tasks")
-      .keys("type", "workStation")
+      .by("type", "workStation")
       .join("employees", "employee")
       .join("departments", "department")
       .join("workStations", "workStation")
@@ -209,7 +209,7 @@ test("performance test", () => {
       .get();
     const tasksByDepartmentAndMonthTransformed = cruncher
       .view("tasks")
-      .keys("department", "date")
+      .by("department", "date")
       .join("employees", "employee")
       .join("departments", "department")
       .join("workStations", "workStation")
@@ -240,32 +240,32 @@ test("performance test", () => {
       .get();
     const tasksByEmployeeDateShiftNoJoins = cruncher
       .view("tasks")
-      .keys("employee", "date", "shift")
+      .by("employee", "date", "shift")
       .get();
     const tasksByEmployeeDateShift = cruncher
       .view("tasks")
-      .keys("employee", "date", "shift")
+      .by("employee", "date", "shift")
       .join("employees", "employee")
       .join("departments", "department")
       .join("workStations", "workStation")
       .get();
     const tasksByWorkstation = cruncher
       .view("tasks")
-      .keys("workStation")
+      .by("workStation")
       .join("employees", "employee")
       .join("departments", "department")
       .join("workStations", "workStation")
       .get();
     const tasksByEmployee = cruncher
       .view("tasks")
-      .keys("employee")
+      .by("employee")
       .join("employees", "employee")
       .join("departments", "department")
       .join("workStations", "workStation")
       .get();
     const tasksByDepartmentAndMonth = cruncher
       .view("tasks")
-      .keys("department", "date")
+      .by("department", "date")
       .join("employees", "employee")
       .join("departments", "department")
       .join("workStations", "workStation")
@@ -273,7 +273,7 @@ test("performance test", () => {
       .get();
     const tasksByTypeAndWorkstation = cruncher
       .view("tasks")
-      .keys("type", "workStation")
+      .by("type", "workStation")
       .join("employees", "employee")
       .join("departments", "department")
       .join("workStations", "workStation")
@@ -284,7 +284,7 @@ test("performance test", () => {
       .get();
     const tasksByDepartmentAndMonthTransformed = cruncher
       .view("tasks")
-      .keys("department", "date")
+      .by("department", "date")
       .join("employees", "employee")
       .join("departments", "department")
       .join("workStations", "workStation")
@@ -324,32 +324,32 @@ test("internal structure is consistent after a lot of updates", () => {
     .get();
   const tasksByEmployeeDateShiftNoJoins = cruncher
     .view("tasks")
-    .keys("employee", "date", "shift")
+    .by("employee", "date", "shift")
     .get();
   const tasksByEmployeeDateShift = cruncher
     .view("tasks")
-    .keys("employee", "date", "shift")
+    .by("employee", "date", "shift")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
     .get();
   const tasksByWorkstation = cruncher
     .view("tasks")
-    .keys("workStation")
+    .by("workStation")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
     .get();
   const tasksByEmployee = cruncher
     .view("tasks")
-    .keys("employee")
+    .by("employee")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
     .get();
   const tasksByDepartmentAndMonth = cruncher
     .view("tasks")
-    .keys("department", "date")
+    .by("department", "date")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
@@ -357,7 +357,7 @@ test("internal structure is consistent after a lot of updates", () => {
     .get();
   const tasksByTypeAndWorkstation = cruncher
     .view("tasks")
-    .keys("type", "workStation")
+    .by("type", "workStation")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
@@ -368,7 +368,7 @@ test("internal structure is consistent after a lot of updates", () => {
     .get();
   const tasksByDepartmentAndMonthTransformed = cruncher
     .view("tasks")
-    .keys("department", "date")
+    .by("department", "date")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
@@ -417,32 +417,32 @@ test("internal structure is consistent after a lot of updates", () => {
     .get();
   const tasksByEmployeeDateShiftNoJoins2 = cruncher2
     .view("tasks")
-    .keys("employee", "date", "shift")
+    .by("employee", "date", "shift")
     .get();
   const tasksByEmployeeDateShift2 = cruncher2
     .view("tasks")
-    .keys("employee", "date", "shift")
+    .by("employee", "date", "shift")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
     .get();
   const tasksByWorkstation2 = cruncher2
     .view("tasks")
-    .keys("workStation")
+    .by("workStation")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
     .get();
   const tasksByEmployee2 = cruncher2
     .view("tasks")
-    .keys("employee")
+    .by("employee")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
     .get();
   const tasksByDepartmentAndMonth2 = cruncher2
     .view("tasks")
-    .keys("department", "date")
+    .by("department", "date")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
@@ -450,7 +450,7 @@ test("internal structure is consistent after a lot of updates", () => {
     .get();
   const tasksByTypeAndWorkstation2 = cruncher2
     .view("tasks")
-    .keys("type", "workStation")
+    .by("type", "workStation")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
@@ -461,7 +461,7 @@ test("internal structure is consistent after a lot of updates", () => {
     .get();
   const tasksByDepartmentAndMonthTransformed2 = cruncher2
     .view("tasks")
-    .keys("department", "date")
+    .by("department", "date")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
@@ -492,32 +492,32 @@ test("internal structure is consistent after a lot of updates with adding data a
     .get();
   const tasksByEmployeeDateShiftNoJoins = cruncher
     .view("tasks")
-    .keys("employee", "date", "shift")
+    .by("employee", "date", "shift")
     .get();
   const tasksByEmployeeDateShift = cruncher
     .view("tasks")
-    .keys("employee", "date", "shift")
+    .by("employee", "date", "shift")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
     .get();
   const tasksByWorkstation = cruncher
     .view("tasks")
-    .keys("workStation")
+    .by("workStation")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
     .get();
   const tasksByEmployee = cruncher
     .view("tasks")
-    .keys("employee")
+    .by("employee")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
     .get();
   const tasksByDepartmentAndMonth = cruncher
     .view("tasks")
-    .keys("department", "date")
+    .by("department", "date")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
@@ -525,7 +525,7 @@ test("internal structure is consistent after a lot of updates with adding data a
     .get();
   const tasksByTypeAndWorkstation = cruncher
     .view("tasks")
-    .keys("type", "workStation")
+    .by("type", "workStation")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
@@ -536,7 +536,7 @@ test("internal structure is consistent after a lot of updates with adding data a
     .get();
   const tasksByDepartmentAndMonthTransformed = cruncher
     .view("tasks")
-    .keys("department", "date")
+    .by("department", "date")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
@@ -592,32 +592,32 @@ test("internal structure is consistent after a lot of updates with adding data a
     .get();
   const tasksByEmployeeDateShiftNoJoins2 = cruncher2
     .view("tasks")
-    .keys("employee", "date", "shift")
+    .by("employee", "date", "shift")
     .get();
   const tasksByEmployeeDateShift2 = cruncher2
     .view("tasks")
-    .keys("employee", "date", "shift")
+    .by("employee", "date", "shift")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
     .get();
   const tasksByWorkstation2 = cruncher2
     .view("tasks")
-    .keys("workStation")
+    .by("workStation")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
     .get();
   const tasksByEmployee2 = cruncher2
     .view("tasks")
-    .keys("employee")
+    .by("employee")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
     .get();
   const tasksByDepartmentAndMonth2 = cruncher2
     .view("tasks")
-    .keys("department", "date")
+    .by("department", "date")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
@@ -625,7 +625,7 @@ test("internal structure is consistent after a lot of updates with adding data a
     .get();
   const tasksByTypeAndWorkstation2 = cruncher2
     .view("tasks")
-    .keys("type", "workStation")
+    .by("type", "workStation")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
@@ -636,7 +636,7 @@ test("internal structure is consistent after a lot of updates with adding data a
     .get();
   const tasksByDepartmentAndMonthTransformed2 = cruncher2
     .view("tasks")
-    .keys("department", "date")
+    .by("department", "date")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
@@ -667,32 +667,32 @@ test("internal structure is consistent after a lot of updates with adding data a
     .get();
   const tasksByEmployeeDateShiftNoJoins = cruncher
     .view("tasks")
-    .keys("employee", "date", "shift")
+    .by("employee", "date", "shift")
     .get();
   const tasksByEmployeeDateShift = cruncher
     .view("tasks")
-    .keys("employee", "date", "shift")
+    .by("employee", "date", "shift")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
     .get();
   const tasksByWorkstation = cruncher
     .view("tasks")
-    .keys("workStation")
+    .by("workStation")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
     .get();
   const tasksByEmployee = cruncher
     .view("tasks")
-    .keys("employee")
+    .by("employee")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
     .get();
   const tasksByDepartmentAndMonth = cruncher
     .view("tasks")
-    .keys("department", "date")
+    .by("department", "date")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
@@ -700,7 +700,7 @@ test("internal structure is consistent after a lot of updates with adding data a
     .get();
   const tasksByTypeAndWorkstation = cruncher
     .view("tasks")
-    .keys("type", "workStation")
+    .by("type", "workStation")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
@@ -711,7 +711,7 @@ test("internal structure is consistent after a lot of updates with adding data a
     .get();
   const tasksByDepartmentAndMonthTransformed = cruncher
     .view("tasks")
-    .keys("department", "date")
+    .by("department", "date")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
@@ -767,32 +767,32 @@ test("internal structure is consistent after a lot of updates with adding data a
     .get();
   const tasksByEmployeeDateShiftNoJoins2 = cruncher2
     .view("tasks")
-    .keys("employee", "date", "shift")
+    .by("employee", "date", "shift")
     .get();
   const tasksByEmployeeDateShift2 = cruncher2
     .view("tasks")
-    .keys("employee", "date", "shift")
+    .by("employee", "date", "shift")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
     .get();
   const tasksByWorkstation2 = cruncher2
     .view("tasks")
-    .keys("workStation")
+    .by("workStation")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
     .get();
   const tasksByEmployee2 = cruncher2
     .view("tasks")
-    .keys("employee")
+    .by("employee")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
     .get();
   const tasksByDepartmentAndMonth2 = cruncher2
     .view("tasks")
-    .keys("department", "date")
+    .by("department", "date")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
@@ -800,7 +800,7 @@ test("internal structure is consistent after a lot of updates with adding data a
     .get();
   const tasksByTypeAndWorkstation2 = cruncher2
     .view("tasks")
-    .keys("type", "workStation")
+    .by("type", "workStation")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")
@@ -811,7 +811,7 @@ test("internal structure is consistent after a lot of updates with adding data a
     .get();
   const tasksByDepartmentAndMonthTransformed2 = cruncher2
     .view("tasks")
-    .keys("department", "date")
+    .by("department", "date")
     .join("employees", "employee")
     .join("departments", "department")
     .join("workStations", "workStation")

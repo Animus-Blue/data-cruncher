@@ -13,18 +13,18 @@ export type Value = string | number | boolean;
 
 export interface Join {
   collection: string;
-  key: string;
+  property: string;
 }
 
 export interface Grouping {
-  key: string;
+  property: string;
   groupingFunction: (value: Value) => Value;
   useGroupsAsParameter: boolean;
 }
 
 export interface ViewOptions {
   collection: string;
-  keys: string[];
+  properties: string[];
   joins?: Join[];
   groupings?: Grouping[];
   transformation?: (item: any) => any;
@@ -43,7 +43,7 @@ interface View {
   groupings?: Grouping[];
   joins?: Join[];
   joinAndTransform: (item: any) => any;
-  keys: Value[];
+  properties: string[];
   data: Map<Value, any>;
   getPath: (item: any) => Value[] | null;
   view: (...args: Value[]) => any;
@@ -52,7 +52,7 @@ interface View {
 class Cruncher {
   private views: View[] = [];
   private normalizedCollections: Map<string, Map<Value, any>>;
-  private collections: Map<string, { idKey: string; data: any[] }>;
+  private collections: Map<string, { idProperty: string; data: any[] }>;
   private references: Map<string, Map<string, Map<string, Map<string, true>>>>;
 
   constructor() {
@@ -61,15 +61,15 @@ class Cruncher {
     this.references = new Map();
   }
 
-  public addCollection(name: string, idKey: string, data?: any[]): void {
+  public addCollection(name: string, idProperty: string, data?: any[]): void {
     const normalizedCollection = new Map<Value, any>();
-    data?.forEach((t) => normalizedCollection.set(t[idKey], t));
+    data?.forEach((t) => normalizedCollection.set(t[idProperty], t));
     this.normalizedCollections.set(name, normalizedCollection);
     if (this.normalizedCollections.get(name)?.get(undefined as any)) {
       throw new Error(`Collection ${name} contains an item with undefined id`);
     }
     this.collections.set(name, {
-      idKey: idKey,
+      idProperty,
       data: [...(data || [])],
     });
   }
@@ -85,8 +85,8 @@ class Cruncher {
     if (alreadyPresentViews) {
       return alreadyPresentViews;
     }
-    const keys = options.keys;
-    const idKey = this.collections.get(options.collection)?.idKey;
+    const properties = options.properties;
+    const idProperty = this.collections.get(options.collection)?.idProperty;
     for (let join of options.joins || []) {
       if (!this.collections.has(join.collection)) {
         throw new Error(`Collection ${join.collection} not found`);
@@ -94,25 +94,25 @@ class Cruncher {
       if (!this.references.has(options.collection)) {
         this.references.set(options.collection, new Map());
       }
-      if (!this.references.get(options.collection)!.has(join.key)) {
-        this.references.get(options.collection)!.set(join.key, new Map());
+      if (!this.references.get(options.collection)!.has(join.property)) {
+        this.references.get(options.collection)!.set(join.property, new Map());
         for (const item of this.collections.get(options.collection)!.data) {
           addReference(
-            this.references.get(options.collection)!.get(join.key)!,
+            this.references.get(options.collection)!.get(join.property)!,
             item,
-            join.key,
-            idKey
+            join.property,
+            idProperty
           );
         }
       }
     }
 
     const pathToGroup: {
-      [key: string]: (value: Value) => Value | undefined | null;
+      [property: string]: (value: Value) => Value | undefined | null;
     } = {};
     options.groupings?.forEach((grouping) => {
       const cache: Map<Value, Value> = new Map();
-      pathToGroup[grouping.key] = (value) => {
+      pathToGroup[grouping.property] = (value) => {
         if (value === null || value === undefined) {
           return value;
         }
@@ -123,14 +123,14 @@ class Cruncher {
       };
     });
     const getPath: (item: any) => Value[] | null = getPathGetter(
-      keys,
+      properties,
       options.groupings,
       pathToGroup
     );
     const joinAndTransform = getJoinAndTransform(
       options.joins,
       options.transformation,
-      idKey as string,
+      idProperty as string,
       this.normalizedCollections
     );
     const data: Map<Value, any> = new Map();
@@ -144,18 +144,18 @@ class Cruncher {
     const argumentToGroupsMap = {};
     options.groupings?.forEach((grouping) => {
       if (!grouping.useGroupsAsParameter) {
-        argumentToGroupsMap[grouping.key] = pathToGroup[grouping.key];
+        argumentToGroupsMap[grouping.property] = pathToGroup[grouping.property];
       }
     });
     if (options.returnSingleItemWithoutGrouping) {
-      view = getSingleItemGetter(data, keys) as (...args: Value[]) => any;
+      view = getSingleItemGetter(data, properties) as (...args: Value[]) => any;
     } else {
       if (Object.keys(argumentToGroupsMap).length > 0) {
-        view = getGetterWithGrouping(data, keys, argumentToGroupsMap) as (
+        view = getGetterWithGrouping(data, properties, argumentToGroupsMap) as (
           ...args: Value[]
         ) => any[];
       } else {
-        view = getGetter(data, keys);
+        view = getGetter(data, properties);
       }
     }
     const newView: View = {
@@ -165,7 +165,7 @@ class Cruncher {
       groupings: options.groupings,
       joins: options.joins,
       joinAndTransform,
-      keys,
+      properties: properties,
       data,
       view: view,
       getPath,
@@ -185,12 +185,12 @@ class Cruncher {
       const deleted: any[] = [];
       const edited: { updated: any; prev: any }[] = [];
       const collection = this.collections.get(update.collection)!.data;
-      const idKey = this.collections.get(update.collection)!.idKey;
+      const idProperty = this.collections.get(update.collection)!.idProperty;
       const normalizedCollection = this.normalizedCollections.get(
         update.collection
       )!;
       for (const t of update.data) {
-        const existing = normalizedCollection.get(t[idKey]);
+        const existing = normalizedCollection.get(t[idProperty]);
         if (!existing) {
           added.push(t);
         } else if (!equal(existing, t)) {
@@ -199,9 +199,9 @@ class Cruncher {
       }
       if (update.data.length !== collection.length + added.length) {
         const normalizedNewData = new Map<string, any>();
-        update.data.forEach((t) => normalizedNewData.set(t[idKey], true));
+        update.data.forEach((t) => normalizedNewData.set(t[idProperty], true));
         for (const t of collection) {
-          if (!normalizedNewData.has(t[idKey])) {
+          if (!normalizedNewData.has(t[idProperty])) {
             deleted.push(t);
           }
         }
@@ -226,7 +226,7 @@ class Cruncher {
     }[]
   ) {
     for (const mutation of mutations) {
-      const idKey = this.collections.get(mutation.collection)!.idKey;
+      const idProperty = this.collections.get(mutation.collection)!.idProperty;
       const normalizedData = this.normalizedCollections.get(
         mutation.collection
       )!;
@@ -235,39 +235,39 @@ class Cruncher {
       // Handle deleted
       if (mutation.deleted.length > 0) {
         for (const t of mutation.deleted) {
-          normalizedData.delete(t[idKey]);
+          normalizedData.delete(t[idProperty]);
           if (references) {
             for (const [ref, val] of references!) {
-              deleteReference(val, t, ref, idKey);
+              deleteReference(val, t, ref, idProperty);
             }
           }
         }
-        const deleted = normalize(mutation.deleted, idKey);
+        const deleted = normalize(mutation.deleted, idProperty);
         this.collections.get(mutation.collection)!.data = this.collections
           .get(mutation.collection)!
-          .data.filter((item) => !deleted[item[idKey]]);
+          .data.filter((item) => !deleted[item[idProperty]]);
       }
 
       // Handle edited
       if (mutation.edited.length > 0) {
         for (const t of mutation.edited) {
-          normalizedData.set(t.prev[idKey], t.updated);
+          normalizedData.set(t.prev[idProperty], t.updated);
           if (references) {
             for (const [ref, val] of references!) {
               if (t.updated[ref] !== t.prev[ref])
-                deleteReference(val, t.prev, ref, idKey);
-              addReference(val, t.updated, ref, idKey);
+                deleteReference(val, t.prev, ref, idProperty);
+              addReference(val, t.updated, ref, idProperty);
             }
           }
         }
-        const edited = normalizeAfterProp(mutation.edited, "prev", idKey);
+        const edited = normalizeAfterProp(mutation.edited, "prev", idProperty);
         this.collections.get(mutation.collection)!.data = this.collections
           .get(
             mutation.collection
             // TODO: optimize
           )!
           .data.map((item) =>
-            edited[item[idKey]] ? edited[item[idKey]].updated : item
+            edited[item[idProperty]] ? edited[item[idProperty]].updated : item
           );
       }
 
@@ -276,10 +276,10 @@ class Cruncher {
         const collection = this.collections.get(mutation.collection)!.data;
         for (const t of mutation.added) {
           collection.push(t);
-          normalizedData.set(t[idKey], t);
+          normalizedData.set(t[idProperty], t);
           if (references) {
             for (const [ref, val] of references!) {
-              addReference(val, t, ref, idKey);
+              addReference(val, t, ref, idProperty);
             }
           }
         }
@@ -308,7 +308,7 @@ class Cruncher {
           view.isInitialized = true;
         }
       } else {
-        const ownIdKey = this.collections.get(view.collection)!.idKey;
+        const ownIdProperty = this.collections.get(view.collection)!.idProperty;
         const references = this.references.get(view.collection);
         let ownMutation:
           | {
@@ -323,34 +323,38 @@ class Cruncher {
           if (mutation.collection === view.collection) {
             ownMutation = mutation;
           } else if (references) {
-            const keysToRefs = view.joins
+            const propertiesToRefs = view.joins
               ?.filter((join) => join.collection === mutation.collection)
-              ?.map((join) => join.key);
-            for (const keyToRef of keysToRefs || []) {
-              const refs = references.get(keyToRef);
+              ?.map((join) => join.property);
+            for (const propertyToRef of propertiesToRefs || []) {
+              const refs = references.get(propertyToRef);
               if (refs) {
-                const foreignIdKey = this.collections.get(
+                const foreignIdProperty = this.collections.get(
                   mutation.collection
-                )!.idKey;
+                )!.idProperty;
                 for (const t of mutation.added) {
-                  if (refs.has(t[foreignIdKey])) {
-                    for (const ownId of refs.get(t[foreignIdKey])!.keys()) {
+                  if (refs.has(t[foreignIdProperty])) {
+                    for (const ownId of refs
+                      .get(t[foreignIdProperty])!
+                      .keys()) {
                       toBeCheckedForChanges.set(ownId, true);
                     }
                   }
                 }
                 for (const t of mutation.edited) {
-                  if (refs.has(t.prev[foreignIdKey])) {
+                  if (refs.has(t.prev[foreignIdProperty])) {
                     for (const ownId of refs
-                      .get(t.prev[foreignIdKey])!
+                      .get(t.prev[foreignIdProperty])!
                       .keys()) {
                       toBeCheckedForChanges.set(ownId, true);
                     }
                   }
                 }
                 for (const t of mutation.deleted) {
-                  if (refs.has(t[foreignIdKey])) {
-                    for (const ownId of refs.get(t[foreignIdKey])!.keys()) {
+                  if (refs.has(t[foreignIdProperty])) {
+                    for (const ownId of refs
+                      .get(t[foreignIdProperty])!
+                      .keys()) {
                       toBeCheckedForChanges.set(ownId, true);
                     }
                   }
@@ -364,10 +368,10 @@ class Cruncher {
         const deleted: Map<Value, any> = new Map();
         if (ownMutation) {
           for (const t of ownMutation.deleted) {
-            toBeCheckedForChanges.delete(t[ownIdKey]);
+            toBeCheckedForChanges.delete(t[ownIdProperty]);
             const path = view.getPath(t);
             if (path) {
-              collectMutationsRecursively(deleted, path, t, t[ownIdKey]);
+              collectMutationsRecursively(deleted, path, t, t[ownIdProperty]);
             }
           }
           const added: Map<Value, any> = new Map();
@@ -375,14 +379,14 @@ class Cruncher {
           for (const t of ownMutation.edited) {
             const prevPath = view.getPath(t.prev);
             const updatedPath = view.getPath(t.updated);
-            toBeCheckedForChanges.delete(t.prev[ownIdKey]);
+            toBeCheckedForChanges.delete(t.prev[ownIdProperty]);
             if (equal(prevPath, updatedPath)) {
               if (prevPath) {
                 collectMutationsRecursively(
                   edited,
                   prevPath,
                   t.updated,
-                  t.prev[ownIdKey]
+                  t.prev[ownIdProperty]
                 );
               }
             } else {
@@ -391,7 +395,7 @@ class Cruncher {
                   deleted,
                   prevPath,
                   t.prev,
-                  t.prev[ownIdKey]
+                  t.prev[ownIdProperty]
                 );
               }
               if (updatedPath) {
@@ -399,7 +403,7 @@ class Cruncher {
                   added,
                   updatedPath,
                   view.joinAndTransform(t.updated),
-                  t.updated[ownIdKey]
+                  t.updated[ownIdProperty]
                 );
               }
             }
@@ -411,33 +415,33 @@ class Cruncher {
                 added,
                 path,
                 view.joinAndTransform(t),
-                t[ownIdKey]
+                t[ownIdProperty]
               );
             }
           }
           unwrapMutationsRecursively(
             deleted,
-            view.keys.length,
+            view.properties.length,
             [],
-            (keysAndTs, path) => {
-              deleteRecursivelyAll(view.data, path, keysAndTs, ownIdKey);
+            (valuesToTs, path) => {
+              deleteRecursivelyAll(view.data, path, valuesToTs, ownIdProperty);
             }
           );
           unwrapMutationsRecursively(
             edited,
-            view.keys.length,
+            view.properties.length,
             [],
-            mutateIfChanged(view.joinAndTransform, view.data, ownIdKey)
+            mutateIfChanged(view.joinAndTransform, view.data, ownIdProperty)
           );
           unwrapMutationsRecursively(
             added,
-            view.keys.length,
+            view.properties.length,
             [],
-            (keysAndTs, path) => {
+            (valuesToTs, path) => {
               addRecursivelyAll(
                 view.data,
                 path,
-                Array.from(keysAndTs.values())
+                Array.from(valuesToTs.values())
               );
             }
           );
@@ -454,9 +458,9 @@ class Cruncher {
         }
         unwrapMutationsRecursively(
           mutatedTs,
-          view.keys.length,
+          view.properties.length,
           [],
-          mutateIfChanged(view.joinAndTransform, view.data, ownIdKey)
+          mutateIfChanged(view.joinAndTransform, view.data, ownIdProperty)
         );
       }
     }
@@ -464,11 +468,13 @@ class Cruncher {
 
   public view = (collection: string) => {
     return {
-      keys: <K extends string[]>(...keys: K) => {
-        if (keys.indexOf(this.collections.get(collection)!.idKey) > -1) {
-          throw new Error("An id cannot be a view key. Use byId instead.");
+      by: <K extends string[]>(...properties: K) => {
+        if (
+          properties.indexOf(this.collections.get(collection)!.idProperty) > -1
+        ) {
+          throw new Error("An id cannot be a view property. Use byId instead.");
         }
-        const options: ViewOptions = { collection, keys };
+        const options: ViewOptions = { collection, properties };
 
         const get = (): ((
           ...args: {
@@ -478,8 +484,8 @@ class Cruncher {
           return this.getView(options);
         };
 
-        const join = (collection: string, key: string) => {
-          options.joins = [...(options.joins || []), { collection, key }];
+        const join = (collection: string, property: string) => {
+          options.joins = [...(options.joins || []), { collection, property }];
           return builder;
         };
 
@@ -489,13 +495,13 @@ class Cruncher {
         };
 
         const group = (
-          key: string,
+          property: string,
           groupingFunction: (valueOfProp: Value) => Value,
           useGroupsAsParameter: boolean = true
         ) => {
           options.groupings = [
             ...(options.groupings || []),
-            { key, groupingFunction, useGroupsAsParameter },
+            { property, groupingFunction, useGroupsAsParameter },
           ];
           return builder;
         };
@@ -515,7 +521,7 @@ class Cruncher {
   public byId = (collection: string) => {
     const options: ViewOptions = {
       collection,
-      keys: [this.collections.get(collection)!.idKey],
+      properties: [this.collections.get(collection)!.idProperty],
       returnSingleItemWithoutGrouping: true,
     };
 
@@ -523,8 +529,8 @@ class Cruncher {
       return this.getView(options);
     };
 
-    const join = (collection: string, key: string) => {
-      options.joins = [...(options.joins || []), { collection, key }];
+    const join = (collection: string, property: string) => {
+      options.joins = [...(options.joins || []), { collection, property }];
       return builder;
     };
 
@@ -546,18 +552,18 @@ class Cruncher {
 function addReference(
   refs: Map<string, Map<string, true>>,
   item,
-  joinKey,
-  ownIdKey
+  joinProperty,
+  ownIdProperty
 ) {
-  if (item[joinKey]) {
-    if (Array.isArray(item[joinKey])) {
-      for (const ref of item[joinKey]) {
+  if (item[joinProperty]) {
+    if (Array.isArray(item[joinProperty])) {
+      for (const ref of item[joinProperty]) {
         if (ref) {
-          addSingleReference(refs, ref, item[ownIdKey]);
+          addSingleReference(refs, ref, item[ownIdProperty]);
         }
       }
     } else {
-      addSingleReference(refs, item[joinKey], item[ownIdKey]);
+      addSingleReference(refs, item[joinProperty], item[ownIdProperty]);
     }
   }
 }
@@ -576,18 +582,18 @@ function addSingleReference(
 function deleteReference(
   refs: Map<string, Map<string, true>>,
   item,
-  joinKey,
-  ownIdKey
+  joinProperty,
+  ownIdProperty
 ) {
-  if (item[joinKey]) {
-    if (Array.isArray(item[joinKey])) {
-      for (const ref of item[joinKey]) {
+  if (item[joinProperty]) {
+    if (Array.isArray(item[joinProperty])) {
+      for (const ref of item[joinProperty]) {
         if (ref) {
-          deleteSingleReference(refs, ref, item[ownIdKey]);
+          deleteSingleReference(refs, ref, item[ownIdProperty]);
         }
       }
     } else {
-      deleteSingleReference(refs, item[joinKey], item[ownIdKey]);
+      deleteSingleReference(refs, item[joinProperty], item[ownIdProperty]);
     }
   }
 }
@@ -604,8 +610,12 @@ function deleteSingleReference(
   }
 }
 
-function mutateIfChanged(joinAndtransform, data: Map<Value, any>, ownIdKey) {
-  return function (keysAndTs, path) {
+function mutateIfChanged(
+  joinAndtransform,
+  data: Map<Value, any>,
+  ownIdProperty
+) {
+  return function (valuesToTs, path) {
     const obj = getObjectAtLevel(data, path, 1);
     let updated: number = 0;
     function updateOrNot(item, updatedItem) {
@@ -619,8 +629,11 @@ function mutateIfChanged(joinAndtransform, data: Map<Value, any>, ownIdKey) {
     const updatedItems = obj
       .get(path[path.length - 1])
       .map((item) =>
-        keysAndTs.has(item[ownIdKey])
-          ? updateOrNot(item, joinAndtransform(keysAndTs.get(item[ownIdKey])))
+        valuesToTs.has(item[ownIdProperty])
+          ? updateOrNot(
+              item,
+              joinAndtransform(valuesToTs.get(item[ownIdProperty]))
+            )
           : item
       );
     if (updated > 0) {
@@ -659,7 +672,7 @@ function deleteRecursivelyAll(
   data: Map<Value, any>,
   path: string[],
   values: Map<Value, any>,
-  idKey
+  idProperty
 ) {
   if (path.length === 1) {
     if (!data.has(path[0])) {
@@ -667,7 +680,7 @@ function deleteRecursivelyAll(
     } else {
       data.set(
         path[0],
-        data.get(path[0]).filter((item) => !values.has(item[idKey]))
+        data.get(path[0]).filter((item) => !values.has(item[idProperty]))
       );
       if (data.get(path[0]).length === 0) {
         data.delete(path[0]);
@@ -680,7 +693,9 @@ function deleteRecursivelyAll(
     console.error("Cannot find path to delete");
     return false;
   }
-  if (deleteRecursivelyAll(data.get(path[0]), path.slice(1), values, idKey)) {
+  if (
+    deleteRecursivelyAll(data.get(path[0]), path.slice(1), values, idProperty)
+  ) {
     if (data.get(path[0]).size === 0) {
       data.delete(path[0]);
       return true;
@@ -715,7 +730,7 @@ function unwrapMutationsRecursively(
   changes,
   level,
   path,
-  callback: (keysAndTs, path) => any
+  callback: (valuesToTs, path) => any
 ) {
   if (level === 0) {
     callback(changes, path);

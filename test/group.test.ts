@@ -17,7 +17,7 @@ test("returns correct views with joins, groupings and transformation", () => {
 
   const playersByScore = cruncher
     .view("players")
-    .keys("score")
+    .by("score")
     .join("items", "item")
     .transform((player) => ({
       ...player,
@@ -89,7 +89,7 @@ test("returns correct views with joins, groupings and transformation after updat
   cruncher.addCollection("items", "id", items);
   const playersByScore = cruncher
     .view("players")
-    .keys("score")
+    .by("score")
     .join("items", "item")
     .transform((player) => ({
       ...player,
@@ -169,7 +169,7 @@ test("returns correct views with joins, groupings and transformation after updat
   cruncher.addCollection("items", "id", items);
   const playersByScore = cruncher
     .view("players")
-    .keys("score")
+    .by("score")
     .join("items", "item")
     .transform((player) => ({
       ...player,
@@ -207,7 +207,7 @@ test("returns correct views with joins, groupings and transformation after updat
   cruncher.addCollection("items", "id", items);
   const playersByScore = cruncher
     .view("players")
-    .keys("score")
+    .by("score")
     .join("items", "item")
     .transform((player) => ({
       ...player,
@@ -287,7 +287,7 @@ test("returns correct views with joins, groupings and transformation after updat
   cruncher.addCollection("items", "id", items);
   const playersByScore = cruncher
     .view("players")
-    .keys("score")
+    .by("score")
     .join("items", "item")
     .transform((player) => ({
       ...player,
@@ -325,7 +325,7 @@ test("returns correct views with joins, groupings and transformation after chang
   cruncher.addCollection("items", "id", items);
   const playersByScore = cruncher
     .view("players")
-    .keys("score")
+    .by("score")
     .join("items", "item")
     .transform((player) => ({
       ...player,
@@ -364,7 +364,7 @@ test("returns correct views with joins, groupings and transformation after chang
   cruncher.addCollection("items", "id", items);
   const playersByScore = cruncher
     .view("players")
-    .keys("score")
+    .by("score")
     .join("items", "item")
     .transform((player) => ({
       ...player,
@@ -437,7 +437,7 @@ test("returns correct views with joins, groupings and transformation with group 
 
   const playersByScore = cruncher
     .view("players")
-    .keys("score")
+    .by("score")
     .join("items", "item")
     .transform((player) => ({
       ...player,
@@ -513,7 +513,7 @@ test("returns correct views with joins, groupings and transformation after updat
   cruncher.addCollection("items", "id", items);
   const playersByScore = cruncher
     .view("players")
-    .keys("score")
+    .by("score")
     .join("items", "item")
     .transform((player) => ({
       ...player,
@@ -597,7 +597,7 @@ test("returns correct views with joins, groupings and transformation after updat
   cruncher.addCollection("items", "id", items);
   const playersByScore = cruncher
     .view("players")
-    .keys("score")
+    .by("score")
     .join("items", "item")
     .transform((player) => ({
       ...player,
@@ -633,7 +633,7 @@ test("returns correct views with joins, groupings and transformation with group 
   cruncher.addCollection("items", "id", items);
   const playersByScore = cruncher
     .view("players")
-    .keys("score")
+    .by("score")
     .join("items", "item")
     .transform((player) => ({
       ...player,
@@ -717,7 +717,7 @@ test("returns correct views with joins, groupings and transformation  with group
   cruncher.addCollection("items", "id", items);
   const playersByScore = cruncher
     .view("players")
-    .keys("score")
+    .by("score")
     .join("items", "item")
     .transform((player) => ({
       ...player,
@@ -753,7 +753,7 @@ test("returns correct views with joins, groupings and transformation  with group
   cruncher.addCollection("items", "id", items);
   const playersByScore = cruncher
     .view("players")
-    .keys("score")
+    .by("score")
     .join("items", "item")
     .transform((player) => ({
       ...player,
@@ -790,7 +790,7 @@ test("returns correct views with joins, groupings and transformation  with group
   cruncher.addCollection("items", "id", items);
   const playersByScore = cruncher
     .view("players")
-    .keys("score")
+    .by("score")
     .join("items", "item")
     .transform((player) => ({
       ...player,
@@ -864,7 +864,7 @@ test("returns correct views with joins, groupings and transformation with group 
   cruncher.addCollection("items", "id", items);
   const playersByScore = cruncher
     .view("players")
-    .keys("score", "color")
+    .by("score", "color")
     .join("items", "item")
     .transform((player) => ({
       ...player,
@@ -946,7 +946,7 @@ test("returns correct views with joins, groupings and transformation with group 
   cruncher.addCollection("items", "id", items);
   const playersByScore = cruncher
     .view("players")
-    .keys("score", "color")
+    .by("score", "color")
     .join("items", "item")
     .transform((player) => ({
       ...player,
@@ -1032,7 +1032,7 @@ test("each grouping function is only being called once per unique argument and c
   cruncher.addCollection("items", "id", items);
   const playersByScore = cruncher
     .view("players")
-    .keys("score", "color")
+    .by("score", "color")
     .join("items", "item")
     .transform((player) => ({
       ...player,

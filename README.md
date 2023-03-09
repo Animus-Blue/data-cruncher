@@ -14,7 +14,7 @@ cruncher.addCollection("orders", "id", orders);
 
 const ordersByCustomerAndStatus = cruncher
   .view("orders")
-  .keys("customer", "status")
+  .by("customer", "status")
   .get();
 
 const fullFilled = ordersByCustomerAndStatus("customer1", "FullFilled");
@@ -32,7 +32,7 @@ cruncher.addCollection("orders", "id", orders);
 
 const ordersByCustomerAndStatus = cruncher
   .view("orders")
-  .keys("customer", "status")
+  .by("customer", "status")
   .get();
 
 const fullFilled = ordersByCustomerAndStatus("customer1", "FullFilled");
@@ -55,7 +55,7 @@ cruncher.addCollection("customers", "id", customers);
 
 const ordersByCustomerAndStatus = cruncher
   .view("orders")
-  .keys("customer", "status")
+  .by("customer", "status")
   .join("customers", "customer")
   .get();
 
@@ -74,7 +74,7 @@ cruncher.addCollection("customers", "id", customers);
 
 const ordersByCustomerAndStatus = cruncher
   .view("orders")
-  .keys("customer", "status")
+  .by("customer", "status")
   .join("customers", "customer")
   .transform((order) => ({ ...order, customer: order.customer?.name }))
   .get();
@@ -93,7 +93,7 @@ cruncher.addCollection("products", "id", products);
 
 const productsByCategoryAndPrice = cruncher
   .view("products")
-  .keys("category", "price")
+  .by("category", "price")
   .group("price", (price) => (price < 20 ? "cheap" : "expensive"))
   .get();
 
@@ -109,7 +109,7 @@ You can query objects by id and use joins and transformations just like with vie
 
 ## Supported data types
 
-data-cruncher can be used for JavaScript objects (including deeply nested objects) with keys, values of primitives and arrays out of the box. These are the kind of objects you usually get after deserializing objects from a database or from network calls.
+data-cruncher can be used for JavaScript objects (including deeply nested objects) with primitive properties and arrays out of the box. These are the kind of objects you usually get after deserializing objects from a database or from network calls.
 
 example:
 

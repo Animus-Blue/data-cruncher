@@ -16,7 +16,7 @@ test("returns correct view", () => {
   cruncher.addCollection("students", "id", students1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .get();
 
   expect(studentsByAgeAndName(20, "John")).toEqual([
@@ -43,9 +43,9 @@ test("returns correct view", () => {
 test("throws an error when adding a view with the id as key", () => {
   const cruncher = new Cruncher();
   cruncher.addCollection("students", "id", students1);
-  expect(() =>
-    cruncher.view("students").keys("age", "name", "id").get()
-  ).toThrow("An id cannot be a view key. Use byId instead.");
+  expect(() => cruncher.view("students").by("age", "name", "id").get()).toThrow(
+    "An id cannot be a view property. Use byId instead."
+  );
 });
 
 test("returns correct view", () => {
@@ -53,7 +53,7 @@ test("returns correct view", () => {
   cruncher.addCollection("students", "id", students1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .get();
 
   expect(studentsByAgeAndName(20, "John")).toEqual([
@@ -82,7 +82,7 @@ test("adds on update", () => {
   cruncher.addCollection("students", "id", students1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .get();
   cruncher.update([{ collection: "students", data: students2 }]);
 
@@ -115,7 +115,7 @@ test("deletes on update", () => {
   cruncher.addCollection("students", "id", students1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .get();
   cruncher.update([{ collection: "students", data: students2 }]);
   cruncher.update([{ collection: "students", data: students3 }]);
@@ -144,7 +144,7 @@ test("swappes changed items on update", () => {
   cruncher.addCollection("students", "id", students1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .get();
   cruncher.update([{ collection: "students", data: students2 }]);
   cruncher.update([{ collection: "students", data: students3 }]);
@@ -175,7 +175,7 @@ test("changes references correctly when adding on update", () => {
   cruncher.addCollection("students", "id", students1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .get();
   const john20 = studentsByAgeAndName(20, "John");
   const jane21 = studentsByAgeAndName(21, "Jane");
@@ -199,7 +199,7 @@ test("changes references correctly when adding and deleting on update", () => {
   cruncher.addCollection("students", "id", students1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .get();
   const john20 = studentsByAgeAndName(20, "John");
   const jane21 = studentsByAgeAndName(21, "Jane");
@@ -222,7 +222,7 @@ test("changed references correctly when swapping on update", () => {
   cruncher.addCollection("students", "id", students1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .get();
   cruncher.update([{ collection: "students", data: students2 }]);
   cruncher.update([{ collection: "students", data: students3 }]);
@@ -248,7 +248,7 @@ test("ignores null or undefined values need for view", () => {
   cruncher.addCollection("students", "id", students4);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .get();
 
   expect(studentsByAgeAndName(20, "John")).toEqual([
@@ -278,7 +278,7 @@ test("ignores null or undefined values need for view when adding values", () => 
   cruncher.addCollection("students", "id", students1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .get();
   cruncher.update([{ collection: "students", data: students4 }]);
 
@@ -309,7 +309,7 @@ test("ignores null or undefined values need for view when deleting values", () =
   cruncher.addCollection("students", "id", students1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .get();
   cruncher.update([{ collection: "students", data: students4 }]);
   cruncher.update([{ collection: "students", data: students1 }]);
@@ -341,7 +341,7 @@ test("ignores null or undefined values need for view when adding values", () => 
   cruncher.addCollection("students", "id", students1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .get();
   cruncher.update([{ collection: "students", data: students4 }]);
 
@@ -504,11 +504,11 @@ test("can get view with up to ten keys", () => {
       .map((item) => item.value);
     const view = cruncher
       .view("collection1")
-      .keys(...keys)
+      .by(...keys)
       .get();
     const viewWithGroupingAndTransformation = cruncher
       .view("collection1")
-      .keys(...keys)
+      .by(...keys)
       .transform((item) => ({ ...item, foo: "bar" }))
       .group("prop1", (prop) => prop, false)
       .get();
@@ -610,7 +610,7 @@ test("deletes on update", () => {
   cruncher.addCollection("students", "id", students1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .get();
   cruncher.update([{ collection: "students", data: students2 }]);
   cruncher.update([{ collection: "students", data: students3 }]);
@@ -637,7 +637,7 @@ test("deletes on update", () => {
 test("can do views on booleans", () => {
   const cruncher = new Cruncher();
   cruncher.addCollection("students", "id", studentsWithHappiness1);
-  const studentsByHappiness = cruncher.view("students").keys("isHappy").get();
+  const studentsByHappiness = cruncher.view("students").by("isHappy").get();
 
   const happyStudents = studentsByHappiness(true);
   const unhappyStudents = studentsByHappiness(false);
@@ -673,19 +673,19 @@ test("returns identical view if it has been created before with collection and k
   cruncher.addCollection("students2", "id", students1);
   const studentsByHappinessAndAge = cruncher
     .view("students")
-    .keys("isHappy", "age")
+    .by("isHappy", "age")
     .get();
   const studentsByHappinessAndAgeV2 = cruncher
     .view("students")
-    .keys("isHappy", "age")
+    .by("isHappy", "age")
     .get();
   const studentsByHappinessAndAgeV3 = cruncher
     .view("students")
-    .keys("isHappy")
+    .by("isHappy")
     .get();
   const studentsByHappinessAndAgeV4 = cruncher
     .view("students2")
-    .keys("isHappy", "age")
+    .by("isHappy", "age")
     .get();
 
   expect(studentsByHappinessAndAge).toBe(studentsByHappinessAndAgeV2);

@@ -8,11 +8,11 @@ test("allows for keys of type string, number, boolean and treats them equal to s
   cruncher.addCollection("students2", "id", students2);
   const studentsBy1337AndTrue = cruncher
     .view("students")
-    .keys("1337", "true")
+    .by("1337", "true")
     .get();
   const studentsBy1337AndTrue2 = cruncher
     .view("students2")
-    .keys(1337 as any, true)
+    .by(1337 as any, true)
     .get();
 
   expect(studentsBy1337AndTrue(31, "yes")).toEqual([
@@ -134,7 +134,7 @@ test("allows for keys of type string, number, boolean and treats them as strings
   cruncher.addCollection("students", "id", students2);
   const studentsBy1337AndTrue = cruncher
     .view("students")
-    .keys(1337 as any, true)
+    .by(1337 as any, true)
     .get();
 
   const yes31 = studentsBy1337AndTrue(31, "yes");
@@ -213,7 +213,7 @@ test("takes types of values into account", () => {
   cruncher.addCollection("students", "id", students3);
   const studentsByHappinessAndAge = cruncher
     .view("students")
-    .keys("isHappy", "age")
+    .by("isHappy", "age")
     .get();
 
   const happyStudents20 = studentsByHappinessAndAge(true, 20);
@@ -235,7 +235,7 @@ test("takes types of values into account when querying", () => {
   cruncher.addCollection("students", "id", students4);
   const studentsByHappinessAndAge = cruncher
     .view("students")
-    .keys("isHappy", "age")
+    .by("isHappy", "age")
     .get();
 
   expect(studentsByHappinessAndAge(true, 21)).toEqual([]);
@@ -253,7 +253,7 @@ test("group will get the properties value with original type", () => {
   cruncher.addCollection("students", "id", students4);
   const studentsByHappinessAndAge = cruncher
     .view("students")
-    .keys("isHappy", "age")
+    .by("isHappy", "age")
     .group("isHappy", (happy: Value) => (typeof happy === "string" ? "3" : 3))
     .group("age", (age: Value) => (typeof age === "string" ? "20" : 20))
     .get();

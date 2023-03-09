@@ -16,7 +16,7 @@ test("returns correct views with multiple joins to the same collection", () => {
   cruncher.addCollection("schools", "id", schools1);
   const teachersByName = cruncher
     .view("teachers")
-    .keys("name")
+    .by("name")
     .join("schools", "schools")
     .join("schools", "previousSchool")
     .get();
@@ -88,7 +88,7 @@ test("returns correct views with multiple joins to the same collection after add
   cruncher.addCollection("schools", "id", schools1);
   const teachersByName = cruncher
     .view("teachers")
-    .keys("name")
+    .by("name")
     .join("schools", "schools")
     .join("schools", "previousSchool")
     .get();
@@ -175,7 +175,7 @@ test("returns correct views with multiple joins to the same collection after del
   cruncher.addCollection("schools", "id", schools1);
   const teachersByName = cruncher
     .view("teachers")
-    .keys("name")
+    .by("name")
     .join("schools", "schools")
     .join("schools", "previousSchool")
     .get();
@@ -247,7 +247,7 @@ test("returns correct views with multiple joins to the same collection after edi
   cruncher.addCollection("schools", "id", schools1);
   const teachersByName = cruncher
     .view("teachers")
-    .keys("name")
+    .by("name")
     .join("schools", "schools")
     .join("schools", "previousSchool")
     .get();
@@ -335,7 +335,7 @@ test("returns correct views with multiple joins to the same collection after del
   cruncher.addCollection("schools", "id", schools1);
   const teachersByName = cruncher
     .view("teachers")
-    .keys("name")
+    .by("name")
     .join("schools", "schools")
     .join("schools", "previousSchool")
     .get();
@@ -416,7 +416,7 @@ test("returns correct views with multiple joins to the same collection after add
   cruncher.addCollection("schools", "id", schools3);
   const teachersByName = cruncher
     .view("teachers")
-    .keys("name")
+    .by("name")
     .join("schools", "schools")
     .join("schools", "previousSchool")
     .get();
@@ -504,7 +504,7 @@ test("returns correct views with multiple joins to the same collection after cha
   cruncher.addCollection("schools", "id", schools1);
   const teachersByName = cruncher
     .view("teachers")
-    .keys("name")
+    .by("name")
     .join("schools", "schools")
     .join("schools", "previousSchool")
     .get();
@@ -592,7 +592,7 @@ test("returns correct views with multiple joins to the same collection after cha
   cruncher.addCollection("schools", "id", schools1);
   const teachersByName = cruncher
     .view("teachers")
-    .keys("name")
+    .by("name")
     .join("schools", "schools")
     .join("schools", "previousSchool")
     .get();

@@ -4,9 +4,9 @@ const EMPTY_ARRAY = [];
 
 function getSingleItemGetter(
   data: Map<Value, any>,
-  keys: string[]
+  properties: string[]
 ): (...args: Value[]) => any {
-  switch (keys.length) {
+  switch (properties.length) {
     case 0:
       return (...args) => data[0];
     case 1:
@@ -18,9 +18,9 @@ function getSingleItemGetter(
 
 function getGetter(
   data: Map<Value, any>,
-  keys: string[]
+  properties: string[]
 ): (...args: Value[]) => any[] {
-  switch (keys.length) {
+  switch (properties.length) {
     case 1:
       return (...args) => data.get(args[0]) || EMPTY_ARRAY;
     case 2:
@@ -102,17 +102,17 @@ function getGetter(
 
 function getGetterWithGrouping(
   data: any,
-  keys: string[],
+  properties: string[],
   argumentToGroupsMap: {
-    [key: string]: (arg: Value) => Value;
+    [property: string]: (arg: Value) => Value;
   }
 ): (...args: Value[]) => any[] {
-  const group = keys.map((key, index) =>
-    argumentToGroupsMap[key]
-      ? (arg) => argumentToGroupsMap[key](arg[index])
+  const group = properties.map((property, index) =>
+    argumentToGroupsMap[property]
+      ? (arg) => argumentToGroupsMap[property](arg[index])
       : (arg) => arg[index]
   );
-  switch (keys.length) {
+  switch (properties.length) {
     case 0:
       return (...args) => data || EMPTY_ARRAY;
     case 1:
@@ -203,50 +203,50 @@ function getJoinAndTransform(
   joins:
     | {
         collection: string;
-        key: string;
+        property: string;
       }[]
     | undefined,
   transformation,
-  idKey: string,
+  idProperty: string,
   normalizedCollections: Map<string, Map<Value, any>>
 ): (item: any) => any {
   if (!joins || joins.length === 0) {
     if (transformation) {
-      if (idKey === "__proto__") {
+      if (idProperty === "__proto__") {
         return (item) => {
           const newItem = transformation!(item);
-          Object.defineProperty(newItem, idKey, {
+          Object.defineProperty(newItem, idProperty, {
             writable: true,
             enumerable: true,
             configurable: true,
-            value: item[idKey],
+            value: item[idProperty],
           });
           return newItem;
         };
       }
       return (item) => ({
         ...transformation!(item),
-        [idKey]: item[idKey],
+        [idProperty]: item[idProperty],
       });
     }
     return (item) => item;
   }
 
   if (transformation) {
-    if (idKey === "__proto__") {
+    if (idProperty === "__proto__") {
       return (item) => {
         const result = { ...item };
         for (const join of joins) {
-          if (item[join.key]) {
+          if (item[join.property]) {
             executeJoin(item, result, join, normalizedCollections);
           }
         }
         const newItem = transformation!(item);
-        Object.defineProperty(newItem, idKey, {
+        Object.defineProperty(newItem, idProperty, {
           writable: true,
           enumerable: true,
           configurable: true,
-          value: item[idKey],
+          value: item[idProperty],
         });
         return newItem;
       };
@@ -254,20 +254,20 @@ function getJoinAndTransform(
     return (item) => {
       const result = { ...item };
       for (const join of joins) {
-        if (item[join.key]) {
+        if (item[join.property]) {
           executeJoin(item, result, join, normalizedCollections);
         }
       }
       return {
         ...transformation!(result),
-        [idKey]: result[idKey],
+        [idProperty]: result[idProperty],
       };
     };
   }
   return (item) => {
     const result = { ...item };
     for (const join of joins) {
-      if (item[join.key]) {
+      if (item[join.property]) {
         executeJoin(item, result, join, normalizedCollections);
       }
     }
@@ -275,28 +275,38 @@ function getJoinAndTransform(
   };
 }
 
-function executeJoin(item, result, join, normalizedCollections) {
-  if (Array.isArray(item[join.key])) {
-    result[join.key] = item[join.key].map((id) =>
+function executeJoin(
+  item,
+  result,
+  join: {
+    collection: string;
+    property: string;
+  },
+  normalizedCollections
+) {
+  if (Array.isArray(item[join.property])) {
+    result[join.property] = item[join.property].map((id) =>
       normalizedCollections.get(join.collection).get(id)
     );
   } else {
-    result[join.key] = normalizedCollections
+    result[join.property] = normalizedCollections
       .get(join.collection)
-      .get(item[join.key]);
+      .get(item[join.property]);
   }
 }
 
 function getPathGetter(
-  keys: string[],
+  properties: string[],
   groupings,
-  pathToGroup: { [key: string]: (value: Value) => Value | undefined | null }
+  pathToGroup: {
+    [property: string]: (value: Value) => Value | undefined | null;
+  }
 ): (item: any) => Value[] | null {
   if (!groupings) {
     return (item: any) => {
       const path: Value[] = [];
-      for (const key of keys) {
-        const pathItem = item[key];
+      for (const property of properties) {
+        const pathItem = item[property];
         if (pathItem === null || pathItem === undefined) {
           return null;
         }
@@ -307,10 +317,10 @@ function getPathGetter(
   }
   return (item: any) => {
     const path: Value[] = [];
-    for (const key of keys) {
-      const pathItem = pathToGroup[key]
-        ? pathToGroup[key](item[key])
-        : item[key];
+    for (const property of properties) {
+      const pathItem = pathToGroup[property]
+        ? pathToGroup[property](item[property])
+        : item[property];
       if (pathItem === null || pathItem === undefined) {
         return null;
       }

@@ -23,10 +23,10 @@ test("returns correct views", () => {
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
 
   expect(studentsByAgeAndName(20, "John")).toEqual([
     {
@@ -101,11 +101,7 @@ test("getter throws exception when collection of join is not present", () => {
   cruncher.addCollection("schools", "id", schools1);
 
   expect(() =>
-    cruncher
-      .view("students")
-      .keys("age", "name")
-      .join("schoolz", "school")
-      .get()
+    cruncher.view("students").by("age", "name").join("schoolz", "school").get()
   ).toThrow("Collection schoolz not found");
 });
 
@@ -115,11 +111,11 @@ test("returns correct views with joins", () => {
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
 
   expect(studentsByAgeAndName(20, "John")).toEqual([
     {
@@ -224,7 +220,7 @@ test("returns correct views with joins and transformation", () => {
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .transform((student) => ({
       ...student,
@@ -232,7 +228,7 @@ test("returns correct views with joins and transformation", () => {
     }))
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
 
   expect(studentsByAgeAndName(20, "John")).toEqual([
     {
@@ -307,7 +303,7 @@ test("cannot transform into primitive value", () => {
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .transform((student) => 42)
     .get();
@@ -325,7 +321,7 @@ test("does not crash with joins and transformation when ids change", () => {
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .transform((student) => ({
       ...student,
@@ -333,7 +329,7 @@ test("does not crash with joins and transformation when ids change", () => {
     }))
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
 
   cruncher.update([{ collection: "students", data: students6 }]);
   expect(studentsByAgeAndName(20, "John")).toEqual([
@@ -409,11 +405,11 @@ test("does not track foreign keys with null or undefined values", () => {
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
 
   expect(studentsByAgeAndName(20, "John")).toEqual([
     {
@@ -519,7 +515,7 @@ test("does not track foreign keys with null or undefined values -v2 with transfo
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .transform((student) => ({
       ...student,
@@ -527,7 +523,7 @@ test("does not track foreign keys with null or undefined values -v2 with transfo
     }))
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
 
   expect(studentsByAgeAndName(20, "John")).toEqual([
     {
@@ -613,11 +609,11 @@ test("does track foreign keys even when reference objects are undefined", () => 
   cruncher.addCollection("schools", "id", schools3);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
   expect(studentsByAgeAndName(20, "John")).toEqual([
     {
       id: "student1",
@@ -719,11 +715,11 @@ test("returns correct views with joins after changing reference", () => {
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
   cruncher.update([{ collection: "schools", data: schools2 }]);
 
   expect(studentsByAgeAndName(20, "John")).toEqual([
@@ -843,7 +839,7 @@ test("byId returns correct views with joins after changing reference", () => {
     .join("schools", "school")
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
   cruncher.update([{ collection: "schools", data: schools2 }]);
 
   expect(studentsById("student1")).toEqual({
@@ -950,7 +946,7 @@ test("byId returns correct views with joins after changing reference - reference
     .byId("students")
     .join("schools", "school")
     .get();
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
 
   const student1 = studentsById("student1");
   const student2 = studentsById("student2");
@@ -996,11 +992,11 @@ test("returns correct views with joins after adding item", () => {
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
   cruncher.update([
     {
       collection: "students",
@@ -1150,11 +1146,11 @@ test("returns correct views with joins after deleting reference", () => {
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
   cruncher.update([{ collection: "schools", data: schools3 }]);
 
   expect(studentsByAgeAndName(20, "John")).toEqual([
@@ -1258,11 +1254,11 @@ test("returns correct views with joins after deleting reference - references che
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
   const john20 = studentsByAgeAndName(20, "John");
   const Jane21 = studentsByAgeAndName(21, "Jane");
   const Jack21 = studentsByAgeAndName(21, "Jack");
@@ -1287,7 +1283,7 @@ test("returns correct views with joins after deleting reference - references che
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .transform((student) => ({
       ...student,
@@ -1295,7 +1291,7 @@ test("returns correct views with joins after deleting reference - references che
     }))
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
   const john20 = studentsByAgeAndName(20, "John");
   const Jane21 = studentsByAgeAndName(21, "Jane");
   const Jack21 = studentsByAgeAndName(21, "Jack");
@@ -1320,11 +1316,11 @@ test("returns correct views with joins after deleting and adding reference", () 
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
 
   cruncher.update([{ collection: "schools", data: schools3 }]);
   cruncher.update([{ collection: "schools", data: schools2 }]);
@@ -1443,7 +1439,7 @@ test("returns correct views with joins and transformation after deleting and add
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .transform((student) => ({
       ...student,
@@ -1451,7 +1447,7 @@ test("returns correct views with joins and transformation after deleting and add
     }))
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
 
   cruncher.update([{ collection: "schools", data: schools3 }]);
   cruncher.update([{ collection: "schools", data: schools2 }]);
@@ -1547,7 +1543,7 @@ test("byId returns correct views with joins and transformation after deleting an
     }))
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
 
   cruncher.update([{ collection: "schools", data: schools3 }]);
   cruncher.update([{ collection: "schools", data: schools2 }]);
@@ -1631,7 +1627,7 @@ test("byId returns correct views with joins and transformation after deleting an
     }))
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
 
   const student1 = studentsById("student1");
   const student2 = studentsById("student2");
@@ -1709,11 +1705,11 @@ test("returns correct views with joins after adding reference - references check
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
   cruncher.update([{ collection: "schools", data: schools3 }]);
   const john20 = studentsByAgeAndName(20, "John");
   const Jane21 = studentsByAgeAndName(21, "Jane");
@@ -1739,7 +1735,7 @@ test("returns correct views with joins and transformation after adding reference
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .transform((student) => ({
       ...student,
@@ -1747,7 +1743,7 @@ test("returns correct views with joins and transformation after adding reference
     }))
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
   cruncher.update([{ collection: "schools", data: schools3 }]);
   const john20 = studentsByAgeAndName(20, "John");
   const Jane21 = studentsByAgeAndName(21, "Jane");
@@ -1773,11 +1769,11 @@ test("returns correct views with joins after changing reference", () => {
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
   cruncher.update([{ collection: "students", data: students3 }]);
 
   expect(studentsByAgeAndName(20, "John")).toEqual([
@@ -1894,7 +1890,7 @@ test("returns correct views with joins and transformation after changing referen
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .transform((student) => ({
       ...student,
@@ -1902,7 +1898,7 @@ test("returns correct views with joins and transformation after changing referen
     }))
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
   cruncher.update([{ collection: "schools", data: schools2 }]);
   expect(studentsByAgeAndName(20, "John")).toEqual([
     {
@@ -1977,7 +1973,7 @@ test("returns correct views with joins and transformation after changing referen
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .transform((student) => ({
       ...student,
@@ -1985,7 +1981,7 @@ test("returns correct views with joins and transformation after changing referen
     }))
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
   const john20 = studentsByAgeAndName(20, "John");
   const jane21 = studentsByAgeAndName(21, "Jane");
   const jack20 = studentsByAgeAndName(21, "Jack");
@@ -2012,7 +2008,7 @@ test("returns correct views with joins and transformation after changes that are
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .transform((student) => ({
       id: student.id,
@@ -2020,7 +2016,7 @@ test("returns correct views with joins and transformation after changes that are
     }))
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
   cruncher.update([{ collection: "students", data: students4 }]);
   expect(studentsByAgeAndName(20, "John")).toEqual([
     {
@@ -2077,7 +2073,7 @@ test("returns correct views with joins and transformation after changes that are
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .transform((student) => ({
       id: student.id,
@@ -2085,7 +2081,7 @@ test("returns correct views with joins and transformation after changes that are
     }))
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
   const john20 = studentsByAgeAndName(20, "John");
   const jane21 = studentsByAgeAndName(21, "Jane");
   const jack21 = studentsByAgeAndName(21, "Jack");
@@ -2111,7 +2107,7 @@ test("returns correct views with joins and transformation and adding data later 
   cruncher.addCollection("schools", "id");
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .transform((student) => ({
       id: student.id,
@@ -2119,7 +2115,7 @@ test("returns correct views with joins and transformation and adding data later 
     }))
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
   cruncher.update([
     { collection: "students", data: students1 },
     { collection: "schools", data: schools1 },
@@ -2181,7 +2177,7 @@ test("returns correct views with joins and transformation and adding data later 
   cruncher.addCollection("schools", "id");
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .transform((student) => ({
       id: student.id,
@@ -2192,7 +2188,7 @@ test("returns correct views with joins and transformation and adding data later 
     { collection: "students", data: students1 },
     { collection: "schools", data: schools1 },
   ]);
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
   const john20 = studentsByAgeAndName(20, "John");
   const jane21 = studentsByAgeAndName(21, "Jane");
   const jane42 = studentsByAgeAndName(42, "Jane");
@@ -2220,7 +2216,7 @@ test("returns correct views with joins and transformation and adding data later 
   cruncher.addCollection("schools", "id");
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .transform((student) => ({
       ...student,
@@ -2228,7 +2224,7 @@ test("returns correct views with joins and transformation and adding data later 
     }))
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
   cruncher.update([
     { collection: "schools", data: schools1 },
     { collection: "students", data: students1 },
@@ -2308,7 +2304,7 @@ test("returns correct views with joins and transformation after changes to relev
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .transform((student) => ({
       id: student.id,
@@ -2316,7 +2312,7 @@ test("returns correct views with joins and transformation after changes to relev
     }))
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
   cruncher.update([{ collection: "students", data: students5 }]);
   expect(studentsByAgeAndName(20, "John")).toEqual([
     {
@@ -2374,7 +2370,7 @@ test("transformations will keep the id of the object even if not specified in th
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .transform((student) => ({
       name: student.name,
@@ -2395,7 +2391,7 @@ test("returns correct views with joins and transformation after changes to relev
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .transform((student) => ({
       id: student.id,
@@ -2403,7 +2399,7 @@ test("returns correct views with joins and transformation after changes to relev
     }))
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
   const john20 = studentsByAgeAndName(20, "John");
   const jane21 = studentsByAgeAndName(21, "Jane");
   const jane42 = studentsByAgeAndName(42, "Jane");
@@ -2431,7 +2427,7 @@ test("returns correct views with joins and transformation after changing referen
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .transform((student) => ({
       ...student,
@@ -2439,7 +2435,7 @@ test("returns correct views with joins and transformation after changing referen
     }))
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
   cruncher.update([{ collection: "schools", data: schools4 }]);
   expect(studentsByAgeAndName(20, "John")).toEqual([
     {
@@ -2514,7 +2510,7 @@ test("returns correct views with joins and transformation after changing referen
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .transform((student) => ({
       ...student,
@@ -2522,7 +2518,7 @@ test("returns correct views with joins and transformation after changing referen
     }))
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
   const john20 = studentsByAgeAndName(20, "John");
   const jane21 = studentsByAgeAndName(21, "Jane");
   const jack20 = studentsByAgeAndName(21, "Jack");
@@ -2549,11 +2545,11 @@ test("returns correct views with joins after changing reference - references che
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
   const john20 = studentsByAgeAndName(20, "John");
   const Jane21 = studentsByAgeAndName(21, "Jane");
   const Jack21 = studentsByAgeAndName(21, "Jack");
@@ -2578,11 +2574,11 @@ test("returns correct views with joins after changing reference back and forth",
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
   cruncher.update([{ collection: "students", data: students3 }]);
   cruncher.update([{ collection: "students", data: students1 }]);
 
@@ -2700,11 +2696,11 @@ test("returns correct views with joins after changing reference back and forth -
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
   cruncher.update([{ collection: "students", data: students3 }]);
   const john20 = studentsByAgeAndName(20, "John");
   const Jane21 = studentsByAgeAndName(21, "Jane");
@@ -2730,7 +2726,7 @@ test("returns correct views with joins and transformation after changing referen
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .transform((student) => ({
       ...student,
@@ -2738,7 +2734,7 @@ test("returns correct views with joins and transformation after changing referen
     }))
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
   cruncher.update([{ collection: "students", data: students3 }]);
   cruncher.update([{ collection: "students", data: students1 }]);
 
@@ -2826,7 +2822,7 @@ test("returns correct views with joins and transformation after changing referen
   cruncher.addCollection("schools", "id", schools1);
   const studentsByAgeAndName = cruncher
     .view("students")
-    .keys("age", "name")
+    .by("age", "name")
     .join("schools", "school")
     .transform((student) => ({
       ...student,
@@ -2834,7 +2830,7 @@ test("returns correct views with joins and transformation after changing referen
     }))
     .get();
 
-  const schoolsByKind = cruncher.view("schools").keys("kind").get();
+  const schoolsByKind = cruncher.view("schools").by("kind").get();
   cruncher.update([{ collection: "students", data: students3 }]);
   const john20 = studentsByAgeAndName(20, "John");
   const Jane21 = studentsByAgeAndName(21, "Jane");
@@ -2860,7 +2856,7 @@ test("returns correct views with array joins", () => {
   cruncher.addCollection("schools", "id", schools1);
   const teachersByName = cruncher
     .view("teachers")
-    .keys("name")
+    .by("name")
     .join("schools", "schools")
     .get();
 
@@ -2914,7 +2910,7 @@ test("returns correct views with array joins after adding new objects", () => {
   cruncher.addCollection("schools", "id", schools1);
   const teachersByName = cruncher
     .view("teachers")
-    .keys("name")
+    .by("name")
     .join("schools", "schools")
     .get();
 
@@ -2980,7 +2976,7 @@ test("array joins references are not effected by reference deletion", () => {
   cruncher.addCollection("schools", "id", schools1);
   const teachersByName = cruncher
     .view("teachers")
-    .keys("name")
+    .by("name")
     .join("schools", "schools")
     .get();
 
@@ -3039,7 +3035,7 @@ test("returns correct views with array joins after deleting", () => {
   cruncher.addCollection("schools", "id", schools1);
   const teachersByName = cruncher
     .view("teachers")
-    .keys("name")
+    .by("name")
     .join("schools", "schools")
     .get();
 
@@ -3095,7 +3091,7 @@ test("returns correct views with array joins after editing objects", () => {
   cruncher.addCollection("schools", "id", schools1);
   const teachersByName = cruncher
     .view("teachers")
-    .keys("name")
+    .by("name")
     .join("schools", "schools")
     .get();
 
@@ -3148,7 +3144,7 @@ test("returns correct views with array joins after editing objects - reference c
   cruncher.addCollection("schools", "id", schools1);
   const teachersByName = cruncher
     .view("teachers")
-    .keys("name")
+    .by("name")
     .join("schools", "schools")
     .get();
 
@@ -3181,7 +3177,7 @@ test("returns correct views with array joins after editing objects with adding d
   cruncher.addCollection("schools", "id");
   const teachersByName = cruncher
     .view("teachers")
-    .keys("name")
+    .by("name")
     .join("schools", "schools")
     .get();
 
@@ -3238,7 +3234,7 @@ test("returns correct views with array joins after editing objects with adding d
   cruncher.addCollection("schools", "id");
   const teachersByName = cruncher
     .view("teachers")
-    .keys("name")
+    .by("name")
     .join("schools", "schools")
     .get();
 
@@ -3276,37 +3272,37 @@ test("returns identical view if it has been created before with joins", () => {
   cruncher.addCollection("teachers", "id", teachers1);
   const studentsBySchoolAndAge = cruncher
     .view("students")
-    .keys("school", "age")
+    .by("school", "age")
     .get();
   const studentsBySchoolAndAge2 = cruncher
     .view("students")
-    .keys("school", "age")
+    .by("school", "age")
     .get();
   const studentsBySchoolAndAge3 = cruncher
     .view("students")
-    .keys("school", "age")
+    .by("school", "age")
     .join("schools", "school")
     .get();
   const studentsBySchoolAndAge4 = cruncher
     .view("students")
-    .keys("school", "age")
+    .by("school", "age")
     .join("schools", "school")
     .get();
   const studentsBySchoolAndAge5 = cruncher
     .view("students")
-    .keys("school", "age")
+    .by("school", "age")
     .join("schools", "school")
     .join("teachers", "teacher")
     .get();
   const studentsBySchoolAndAge6 = cruncher
     .view("students")
-    .keys("school", "age")
+    .by("school", "age")
     .join("schools", "school")
     .join("teachers", "otherteacher")
     .get();
   const studentsBySchoolAndAge7 = cruncher
     .view("students")
-    .keys("school", "age")
+    .by("school", "age")
     .join("teachers", "teacher")
     .join("schools", "school")
     .get();
@@ -3328,27 +3324,27 @@ test("returns identical view if it has been created before with joins and groupi
   const myGrouping = () => 42;
   const studentsBySchoolAndAge1 = cruncher
     .view("students")
-    .keys("school", "age")
+    .by("school", "age")
     .join("schools", "school")
     .get();
   const studentsBySchoolAndAge2 = cruncher
     .view("students")
-    .keys("school", "age")
+    .by("school", "age")
     .join("schools", "school")
     .get();
   const studentsBySchoolAndAge3 = cruncher
     .view("students")
-    .keys("school", "age")
+    .by("school", "age")
     .group("schools", myGrouping)
     .get();
   const studentsBySchoolAndAge4 = cruncher
     .view("students")
-    .keys("school", "age")
+    .by("school", "age")
     .group("schools", myGrouping)
     .get();
   const studentsBySchoolAndAge5 = cruncher
     .view("students")
-    .keys("school", "age")
+    .by("school", "age")
     .group("schools", () => 42)
     .get();
 
@@ -3370,44 +3366,44 @@ test("returns identical view if it has been created before with joins and groupi
   };
   const studentsBySchoolAndAge1 = cruncher
     .view("students")
-    .keys("school", "age")
+    .by("school", "age")
     .join("schools", "school")
     .get();
   const studentsBySchoolAndAge2 = cruncher
     .view("students")
-    .keys("school", "age")
+    .by("school", "age")
     .join("schools", "school")
     .get();
   const studentsBySchoolAndAge3 = cruncher
     .view("students")
-    .keys("school", "age")
+    .by("school", "age")
     .group("schools", myGrouping)
     .get();
   const studentsBySchoolAndAge4 = cruncher
     .view("students")
-    .keys("school", "age")
+    .by("school", "age")
     .group("schools", myGrouping)
     .get();
   const studentsBySchoolAndAge5 = cruncher
     .view("students")
-    .keys("school", "age")
+    .by("school", "age")
     .group("schools", () => 42)
     .get();
   const studentsBySchoolAndAge6 = cruncher
     .view("students")
-    .keys("school", "age")
+    .by("school", "age")
     .group("schools", myGrouping)
     .transform(myTransformation)
     .get();
   const studentsBySchoolAndAge7 = cruncher
     .view("students")
-    .keys("school", "age")
+    .by("school", "age")
     .group("schools", myGrouping)
     .transform(myTransformation)
     .get();
   const studentsBySchoolAndAge8 = cruncher
     .view("students")
-    .keys("school", "age")
+    .by("school", "age")
     .group("schools", myGrouping)
     .transform(() => {
       value: 42;
@@ -3415,28 +3411,28 @@ test("returns identical view if it has been created before with joins and groupi
     .get();
   const studentsBySchoolAndAge9 = cruncher
     .view("students")
-    .keys("school", "age")
+    .by("school", "age")
     .group("schools", myGrouping)
     .group("name", myGrouping2)
     .transform(myTransformation)
     .get();
   const studentsBySchoolAndAge10 = cruncher
     .view("students")
-    .keys("school", "age")
+    .by("school", "age")
     .transform(myTransformation)
     .group("name", myGrouping2)
     .group("schools", myGrouping)
     .get();
   const studentsBySchoolAndAge11 = cruncher
     .view("students")
-    .keys("school", "age")
+    .by("school", "age")
     .transform(myTransformation)
     .group("name", myGrouping2, false)
     .group("schools", myGrouping)
     .get();
   const studentsBySchoolAndAge12 = cruncher
     .view("students")
-    .keys("school", "age")
+    .by("school", "age")
     .join("schools", "school")
     .transform(myTransformation)
     .group("name", myGrouping2, false)
@@ -3444,7 +3440,7 @@ test("returns identical view if it has been created before with joins and groupi
     .get();
   const studentsBySchoolAndAge13 = cruncher
     .view("students")
-    .keys("school", "age")
+    .by("school", "age")
     .join("schools", "school")
     .transform(myTransformation)
     .group("name", myGrouping2, false)
@@ -3452,7 +3448,7 @@ test("returns identical view if it has been created before with joins and groupi
     .get();
   const studentsBySchoolAndAge14 = cruncher
     .view("students")
-    .keys("school", "age")
+    .by("school", "age")
     .join("schools", "school")
     .join("teachers", "teacher")
     .transform(myTransformation)

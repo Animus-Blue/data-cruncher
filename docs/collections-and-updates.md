@@ -5,10 +5,10 @@
 You have to first add collections before you can create views. Use the addCollection method:
 
 ```ts
-addCollection(name: string, idKey: string, data?: any[]): void
+addCollection(name: string, idProperty: string, data?: any[]): void
 ```
 
-Note that you have to pass the idKey which uniquely identifies each of the objects in the collection as the second argument.
+Note that you have to pass the idProperty which uniquely identifies each of the objects in the collection.
 
 example:
 
@@ -31,7 +31,7 @@ cruncher.addCollection("orders", "id", orders);
 
 const ordersByCustomerAndStatus = cruncher
   .view("orders")
-  .keys("customer", "status")
+  .by("customer", "status")
   .get();
 
 const fullFilled = ordersByCustomerAndStatus("customer1", "FullFilled");
@@ -47,7 +47,7 @@ cruncher.addCollection("orders", "id");
 
 const ordersByCustomerAndStatus = cruncher
   .view("orders")
-  .keys("customer", "status")
+  .by("customer", "status")
   .get();
 
 const orders = await fetchOrders();
@@ -67,12 +67,12 @@ cruncher.addCollection("customers", "id", customers);
 
 const ordersByCustomerAndStatus = cruncher
   .view("orders")
-  .keys("customer", "status")
+  .by("customer", "status")
   .get();
 
 const customersByCountryStateMembership = cruncher
   .view("customers")
-  .keys("country", "state", "membership")
+  .by("country", "state", "membership")
   .get();
 
 const fullFilled = ordersByCustomerAndStatus("customer1", "FullFilled");
