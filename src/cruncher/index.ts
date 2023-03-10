@@ -262,10 +262,7 @@ class Cruncher {
         }
         const edited = normalizeAfterProp(mutation.edited, "prev", idProperty);
         this.collections.get(mutation.collection)!.data = this.collections
-          .get(
-            mutation.collection
-            // TODO: optimize
-          )!
+          .get(mutation.collection)!
           .data.map((item) =>
             edited[item[idProperty]] ? edited[item[idProperty]].updated : item
           );
@@ -334,29 +331,29 @@ class Cruncher {
                 )!.idProperty;
                 for (const t of mutation.added) {
                   if (refs.has(t[foreignIdProperty])) {
-                    for (const ownId of refs
+                    refs
                       .get(t[foreignIdProperty])!
-                      .keys()) {
-                      toBeCheckedForChanges.set(ownId, true);
-                    }
+                      .forEach((_, ownId) =>
+                        toBeCheckedForChanges.set(ownId, true)
+                      );
                   }
                 }
                 for (const t of mutation.edited) {
                   if (refs.has(t.prev[foreignIdProperty])) {
-                    for (const ownId of refs
+                    refs
                       .get(t.prev[foreignIdProperty])!
-                      .keys()) {
-                      toBeCheckedForChanges.set(ownId, true);
-                    }
+                      .forEach((_, ownId) =>
+                        toBeCheckedForChanges.set(ownId, true)
+                      );
                   }
                 }
                 for (const t of mutation.deleted) {
                   if (refs.has(t[foreignIdProperty])) {
-                    for (const ownId of refs
+                    refs
                       .get(t[foreignIdProperty])!
-                      .keys()) {
-                      toBeCheckedForChanges.set(ownId, true);
-                    }
+                      .forEach((_, ownId) =>
+                        toBeCheckedForChanges.set(ownId, true)
+                      );
                   }
                 }
               }
@@ -449,13 +446,13 @@ class Cruncher {
 
         // Go through all items that might have changed
         const mutatedTs: Map<Value, any> = new Map();
-        for (const id of toBeCheckedForChanges.keys()) {
+        toBeCheckedForChanges.forEach((_, id) => {
           const t = this.normalizedCollections.get(view.collection)!.get(id);
           const path = view.getPath(t);
           if (path) {
             collectMutationsRecursively(mutatedTs, path, t, id);
           }
-        }
+        });
         unwrapMutationsRecursively(
           mutatedTs,
           view.properties.length,
@@ -736,14 +733,14 @@ function unwrapMutationsRecursively(
     callback(changes, path);
     return;
   }
-  for (const key of changes.keys()) {
+  changes.forEach((_, key) => {
     unwrapMutationsRecursively(
       changes.get(key),
       level - 1,
       [...path, key],
       callback
     );
-  }
+  });
 }
 
 export default Cruncher;
