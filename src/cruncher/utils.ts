@@ -212,18 +212,6 @@ function getJoinAndTransform(
 ): (item: any) => any {
   if (!joins || joins.length === 0) {
     if (transformation) {
-      if (idProperty === "__proto__") {
-        return (item) => {
-          const newItem = transformation!(item);
-          Object.defineProperty(newItem, idProperty, {
-            writable: true,
-            enumerable: true,
-            configurable: true,
-            value: item[idProperty],
-          });
-          return newItem;
-        };
-      }
       return (item) => ({
         ...transformation!(item),
         [idProperty]: item[idProperty],
@@ -233,24 +221,6 @@ function getJoinAndTransform(
   }
 
   if (transformation) {
-    if (idProperty === "__proto__") {
-      return (item) => {
-        const result = { ...item };
-        for (const join of joins) {
-          if (item[join.property]) {
-            executeJoin(item, result, join, normalizedCollections);
-          }
-        }
-        const newItem = transformation!(item);
-        Object.defineProperty(newItem, idProperty, {
-          writable: true,
-          enumerable: true,
-          configurable: true,
-          value: item[idProperty],
-        });
-        return newItem;
-      };
-    }
     return (item) => {
       const result = { ...item };
       for (const join of joins) {
