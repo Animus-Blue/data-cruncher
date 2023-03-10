@@ -2904,6 +2904,34 @@ test("returns correct views with array joins", () => {
   ).toBe(true);
 });
 
+test("view by and byId with array joins do not manipulate original collections", () => {
+  const cruncher = new Cruncher();
+  const originalTeachers1 = JSON.parse(JSON.stringify(teachers1));
+  const originalSchools1 = JSON.parse(JSON.stringify(schools1));
+  const originalTeachers1Refs = [...teachers1];
+  const originalSchools1Refs = [...schools1];
+  cruncher.addCollection("teachers", "id", teachers1);
+  cruncher.addCollection("schools", "id", schools1);
+  const teachersById = cruncher
+    .byId("teachers")
+    .join("schools", "schools")
+    .get();
+  const teachersByName = cruncher
+    .view("teachers")
+    .by("name")
+    .join("schools", "schools")
+    .get();
+
+  for (let i = 0; i < originalTeachers1Refs.length; i++) {
+    expect(teachers1[i]).toBe(originalTeachers1Refs[i]);
+  }
+  for (let i = 0; i < originalSchools1Refs.length; i++) {
+    expect(schools1[i]).toBe(originalSchools1Refs[i]);
+  }
+  expect(equal(originalSchools1, schools1)).toBe(true);
+  expect(equal(originalTeachers1, teachers1)).toBe(true);
+});
+
 test("returns correct views with array joins after adding new objects", () => {
   const cruncher = new Cruncher();
   cruncher.addCollection("teachers", "id", teachers1);

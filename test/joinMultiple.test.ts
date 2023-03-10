@@ -706,6 +706,42 @@ test("byId returns correct item with multiple joins to the same collection after
   ).toBe(true);
 });
 
+test("view by and byId with multiple joins to the same collection do not manipulate original collections", () => {
+  const cruncher = new Cruncher();
+  const originalTeachers3 = JSON.parse(JSON.stringify(teachers3));
+  const originalSchools1 = JSON.parse(JSON.stringify(schools1));
+  const originalSchools2 = JSON.parse(JSON.stringify(schools2));
+  const originalTeachers3Refs = [...teachers3];
+  const originalSchools1Refs = [...schools1];
+  const originalSchools2Refs = [...schools2];
+  cruncher.addCollection("teachers", "id", teachers3);
+  cruncher.addCollection("schools", "id", schools1);
+  const teachersById = cruncher
+    .byId("teachers")
+    .join("schools", "schools")
+    .join("schools", "previousSchool")
+    .get();
+  const teachersByName = cruncher
+    .view("teachers")
+    .by("name")
+    .join("schools", "schools")
+    .join("schools", "previousSchool")
+    .get();
+  cruncher.update([{ collection: "schools", data: schools2 }]);
+  for (let i = 0; i < originalTeachers3Refs.length; i++) {
+    expect(teachers3[i]).toBe(originalTeachers3Refs[i]);
+  }
+  for (let i = 0; i < originalSchools1Refs.length; i++) {
+    expect(schools1[i]).toBe(originalSchools1Refs[i]);
+  }
+  for (let i = 0; i < originalSchools2Refs.length; i++) {
+    expect(schools2[i]).toBe(originalSchools2Refs[i]);
+  }
+  expect(equal(originalSchools1, schools1)).toBe(true);
+  expect(equal(originalSchools2, schools2)).toBe(true);
+  expect(equal(originalTeachers3, teachers3)).toBe(true);
+});
+
 test("byId returns correct item with multiple joins to the same collection after changing reference - reference check", () => {
   const cruncher = new Cruncher();
   cruncher.addCollection("teachers", "id", teachers3);
