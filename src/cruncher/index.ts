@@ -11,6 +11,12 @@ import { getAlreadyPresentViews } from "./verifyViews";
 
 export type Value = string | number | boolean;
 
+interface CollectionMutation {
+  deleted: boolean;
+  prev: any;
+  updated?: any;
+}
+
 export interface Join {
   collection: string;
   property: string;
@@ -231,53 +237,53 @@ class Cruncher {
         mutation.collection
       )!;
       const references = this.references.get(mutation.collection);
-
-      // Handle deleted
-      if (mutation.deleted.length > 0) {
-        for (const t of mutation.deleted) {
-          normalizedData.delete(t[idProperty]);
+      const mutations: Map<string, CollectionMutation> = new Map();
+      mutation.deleted.forEach((t) => {
+        mutations.set(t[idProperty], { deleted: true, prev: t });
+      });
+      mutation.edited.forEach((t) => {
+        mutations.set(t.prev[idProperty], {
+          deleted: false,
+          prev: t.prev,
+          updated: t.updated,
+        });
+      });
+      for (const [id, m] of mutations) {
+        if (m.deleted) {
+          normalizedData.delete(id);
           if (references) {
             for (const [ref, val] of references!) {
-              deleteReference(val, t, ref, idProperty);
+              deleteReference(val, m.prev, ref, idProperty);
+            }
+          }
+        } else {
+          normalizedData.set(id, m.updated);
+          if (references) {
+            for (const [ref, val] of references!) {
+              deleteReference(val, m.prev, ref, idProperty);
+              addReference(val, m.updated, ref, idProperty);
             }
           }
         }
-        const deleted = normalize(mutation.deleted, idProperty);
-        this.collections.get(mutation.collection)!.data = this.collections
-          .get(mutation.collection)!
-          .data.filter((item) => !deleted[item[idProperty]]);
       }
-
-      // Handle edited
-      if (mutation.edited.length > 0) {
-        for (const t of mutation.edited) {
-          normalizedData.set(t.prev[idProperty], t.updated);
-          if (references) {
-            for (const [ref, val] of references!) {
-              if (t.updated[ref] !== t.prev[ref])
-                deleteReference(val, t.prev, ref, idProperty);
-              addReference(val, t.updated, ref, idProperty);
-            }
-          }
+      const updatedCollection: any[] = [];
+      for (const t of this.collections.get(mutation.collection)!.data) {
+        if (!mutations.has(t[idProperty])) {
+          updatedCollection.push(t);
+        } else if (mutations.get(t[idProperty])!.deleted === false) {
+          updatedCollection.push(mutations.get(t[idProperty])!.updated);
         }
-        const edited = normalizeAfterProp(mutation.edited, "prev", idProperty);
-        this.collections.get(mutation.collection)!.data = this.collections
-          .get(mutation.collection)!
-          .data.map((item) =>
-            edited[item[idProperty]] ? edited[item[idProperty]].updated : item
-          );
       }
+      this.collections.get(mutation.collection)!.data = updatedCollection;
 
       // Handle added
-      if (mutation.added.length > 0) {
-        const collection = this.collections.get(mutation.collection)!.data;
-        for (const t of mutation.added) {
-          collection.push(t);
-          normalizedData.set(t[idProperty], t);
-          if (references) {
-            for (const [ref, val] of references!) {
-              addReference(val, t, ref, idProperty);
-            }
+      const collection = this.collections.get(mutation.collection)!.data;
+      for (const t of mutation.added) {
+        collection.push(t);
+        normalizedData.set(t[idProperty], t);
+        if (references) {
+          for (const [ref, val] of references!) {
+            addReference(val, t, ref, idProperty);
           }
         }
       }
