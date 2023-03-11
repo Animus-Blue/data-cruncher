@@ -11,10 +11,10 @@ import { getAlreadyPresentViews } from "./verifyViews";
 
 export type Value = string | number | boolean;
 
-interface CollectionMutation {
-  deleted: boolean;
-  prev: any;
-  updated?: any;
+interface Mutation {
+  collection: string;
+  added: any[];
+  mutations: Map<string, { deleted: boolean; prev: any; updated?: any }>;
 }
 
 export interface Join {
@@ -181,15 +181,14 @@ class Cruncher {
   }
 
   public update(updates: Update[]) {
-    const mutations: {
-      collection: string;
-      added: any[];
-      edited: { updated: any; prev: any }[];
-      deleted: any[];
-    }[] = updates.map((update) => {
-      const added: any[] = [];
-      const deleted: any[] = [];
-      const edited: { updated: any; prev: any }[] = [];
+    const mutations: Mutation[] = updates.map((update) => {
+      const mutation: Mutation = {
+        collection: update.collection,
+        added: [],
+        mutations: new Map(),
+      };
+      const added = mutation.added;
+      const mutations = mutation.mutations;
       const collection = this.collections.get(update.collection)!.data;
       const idProperty = this.collections.get(update.collection)!.idProperty;
       const normalizedCollection = this.normalizedCollections.get(
@@ -200,7 +199,11 @@ class Cruncher {
         if (!existing) {
           added.push(t);
         } else if (!equal(existing, t)) {
-          edited.push({ updated: t, prev: existing });
+          mutations.set(t[idProperty], {
+            deleted: false,
+            updated: t,
+            prev: existing,
+          });
         }
       }
       if (update.data.length !== collection.length + added.length) {
@@ -208,46 +211,24 @@ class Cruncher {
         update.data.forEach((t) => normalizedNewData.set(t[idProperty], true));
         for (const t of collection) {
           if (!normalizedNewData.has(t[idProperty])) {
-            deleted.push(t);
+            mutations.set(t[idProperty], { deleted: true, prev: t });
           }
         }
       }
-      return {
-        collection: update.collection,
-        added,
-        edited,
-        deleted,
-      };
+      return mutation;
     });
     this.updateCollections(mutations);
     this.updateViews(mutations);
   }
 
-  private updateCollections(
-    mutations: {
-      collection: string;
-      added: any[];
-      edited: { updated: any; prev: any }[];
-      deleted: any[];
-    }[]
-  ) {
+  private updateCollections(mutations: Mutation[]) {
     for (const mutation of mutations) {
       const idProperty = this.collections.get(mutation.collection)!.idProperty;
       const normalizedData = this.normalizedCollections.get(
         mutation.collection
       )!;
       const references = this.references.get(mutation.collection);
-      const mutations: Map<string, CollectionMutation> = new Map();
-      mutation.deleted.forEach((t) => {
-        mutations.set(t[idProperty], { deleted: true, prev: t });
-      });
-      mutation.edited.forEach((t) => {
-        mutations.set(t.prev[idProperty], {
-          deleted: false,
-          prev: t.prev,
-          updated: t.updated,
-        });
-      });
+      const mutations = mutation.mutations;
       for (const [id, m] of mutations) {
         if (m.deleted) {
           normalizedData.delete(id);
@@ -290,14 +271,7 @@ class Cruncher {
     }
   }
 
-  private updateViews(
-    mutations: {
-      collection: string;
-      added: any[];
-      edited: { updated: any; prev: any }[];
-      deleted: any[];
-    }[]
-  ) {
+  private updateViews(mutations: Mutation[]) {
     for (const view of this.views) {
       if (!view.isInitialized) {
         const ts = this.collections.get(view.collection)!.data;
@@ -313,14 +287,7 @@ class Cruncher {
       } else {
         const ownIdProperty = this.collections.get(view.collection)!.idProperty;
         const references = this.references.get(view.collection);
-        let ownMutation:
-          | {
-              collection: string;
-              added: any[];
-              edited: { updated: any; prev: any }[];
-              deleted: any[];
-            }
-          | undefined;
+        let ownMutation: Mutation | undefined;
         const toBeCheckedForChanges: Map<string, true> = new Map();
         for (const mutation of mutations) {
           if (mutation.collection === view.collection) {
@@ -344,19 +311,10 @@ class Cruncher {
                       );
                   }
                 }
-                for (const t of mutation.edited) {
-                  if (refs.has(t.prev[foreignIdProperty])) {
+                for (const [id, singleMutation] of mutation.mutations) {
+                  if (refs.has(id)) {
                     refs
-                      .get(t.prev[foreignIdProperty])!
-                      .forEach((_, ownId) =>
-                        toBeCheckedForChanges.set(ownId, true)
-                      );
-                  }
-                }
-                for (const t of mutation.deleted) {
-                  if (refs.has(t[foreignIdProperty])) {
-                    refs
-                      .get(t[foreignIdProperty])!
+                      .get(id)!
                       .forEach((_, ownId) =>
                         toBeCheckedForChanges.set(ownId, true)
                       );
@@ -370,47 +328,53 @@ class Cruncher {
         // Handle own Collection
         const deleted: Map<Value, any> = new Map();
         if (ownMutation) {
-          for (const t of ownMutation.deleted) {
-            toBeCheckedForChanges.delete(t[ownIdProperty]);
-            const path = view.getPath(t);
-            if (path) {
-              collectMutationsRecursively(deleted, path, t, t[ownIdProperty]);
-            }
-          }
           const added: Map<Value, any> = new Map();
           const edited: Map<Value, any> = new Map();
-          for (const t of ownMutation.edited) {
-            const prevPath = view.getPath(t.prev);
-            const updatedPath = view.getPath(t.updated);
-            toBeCheckedForChanges.delete(t.prev[ownIdProperty]);
-            if (equal(prevPath, updatedPath)) {
-              if (prevPath) {
+          for (const [id, singleMutation] of ownMutation.mutations) {
+            toBeCheckedForChanges.delete(id);
+            if (singleMutation.deleted) {
+              const path = view.getPath(singleMutation.prev);
+              if (path) {
                 collectMutationsRecursively(
-                  edited,
-                  prevPath,
-                  t.updated,
-                  t.prev[ownIdProperty]
+                  deleted,
+                  path,
+                  singleMutation.prev,
+                  id
                 );
               }
             } else {
-              if (prevPath) {
-                collectMutationsRecursively(
-                  deleted,
-                  prevPath,
-                  t.prev,
-                  t.prev[ownIdProperty]
-                );
-              }
-              if (updatedPath) {
-                collectMutationsRecursively(
-                  added,
-                  updatedPath,
-                  view.joinAndTransform(t.updated),
-                  t.updated[ownIdProperty]
-                );
+              const prevPath = view.getPath(singleMutation.prev);
+              const updatedPath = view.getPath(singleMutation.updated);
+              if (equal(prevPath, updatedPath)) {
+                if (prevPath) {
+                  collectMutationsRecursively(
+                    edited,
+                    prevPath,
+                    singleMutation.updated,
+                    id
+                  );
+                }
+              } else {
+                if (prevPath) {
+                  collectMutationsRecursively(
+                    deleted,
+                    prevPath,
+                    singleMutation.prev,
+                    id
+                  );
+                }
+                if (updatedPath) {
+                  collectMutationsRecursively(
+                    added,
+                    updatedPath,
+                    view.joinAndTransform(singleMutation.updated),
+                    id
+                  );
+                }
               }
             }
           }
+
           for (const t of ownMutation.added) {
             const path = view.getPath(t);
             if (path) {
