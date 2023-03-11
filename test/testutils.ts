@@ -231,7 +231,37 @@ function internalSortRecursively(data) {
   }
 }
 
-export { TestUtils };
+function toObject(map: Map<any, any>, levels: number) {
+  const result = {};
+  if (levels === 1) {
+    for (const [keyA, valueA] of map) {
+      result[keyA] = valueA;
+    }
+    return result;
+  } else if (levels === 2) {
+    for (const [keyA, valueA] of map) {
+      result[keyA] = {};
+      for (const [keyB, valueB] of map.get(keyA)) {
+        result[keyA][keyB] = valueB;
+      }
+    }
+    return result;
+  } else if (levels === 3) {
+    for (const [keyA, valueA] of map) {
+      result[keyA] = {};
+      for (const [keyB, valueB] of map.get(keyA)) {
+        result[keyA][keyB] = {};
+        for (const [keyC, valueC] of map.get(keyA).get(keyB)) {
+          result[keyA][keyB][keyC] = valueC;
+        }
+      }
+    }
+    return result;
+  }
+  return result;
+}
+
+export { TestUtils, toObject };
 
 /*
 This is a copy of the MIT license text from https://github.com/epoberezkin/fast-deep-equal:

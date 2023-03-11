@@ -1,211 +1,20 @@
 import Cruncher from "../src";
-import { Value } from "../src/cruncher";
-import { students, students2, students3, students4 } from "./types.testdata";
+import { students, students2, students3, students4 } from "./types.fixtures";
 
-test("allows for keys of type string, number, boolean and treats them equal to strings", () => {
+test("by only allows for functions and strings", () => {
   const cruncher = new Cruncher();
   cruncher.addCollection("students", "id", students);
   cruncher.addCollection("students2", "id", students2);
   const studentsBy1337AndTrue = cruncher
     .view("students")
-    .by("1337", "true")
+    .by("1337", (student) => (student.age > 21 ? "senior" : "junior"))
     .get();
-  const studentsBy1337AndTrue2 = cruncher
-    .view("students2")
-    .by(1337 as any, true)
-    .get();
-
-  expect(studentsBy1337AndTrue(31, "yes")).toEqual([
-    {
-      id: "3",
-      name: "Jack",
-      age: 21,
-      1337: 31,
-      true: "yes",
-      otherProp: "other",
-    },
-  ]);
-  expect(studentsBy1337AndTrue2(31, "yes")).toEqual([
-    {
-      id: "3",
-      name: "Jack",
-      age: 21,
-      1337: 31,
-      true: "yes",
-      otherProp: "other",
-    },
-  ]);
-  expect(studentsBy1337AndTrue(31, "no")).toEqual([
-    {
-      id: "4",
-      name: "Jacky",
-      age: 22,
-      1337: 31,
-      true: "no",
-      otherProp: "other",
-    },
-  ]);
-  expect(studentsBy1337AndTrue2(31, "no")).toEqual([
-    {
-      id: "4",
-      name: "Jacky",
-      age: 22,
-      1337: 31,
-      true: "no",
-      otherProp: "other",
-    },
-  ]);
-  expect(studentsBy1337AndTrue(32, "yes")).toEqual([
-    {
-      id: "1",
-      name: "John",
-      age: 20,
-      1337: 32,
-      true: "yes",
-      otherProp: "other",
-    },
-    {
-      id: "2",
-      name: "Jane",
-      age: 21,
-      1337: 32,
-      true: "yes",
-      otherProp: "other",
-    },
-  ]);
-  expect(studentsBy1337AndTrue2(32, "yes")).toEqual([
-    {
-      id: "1",
-      name: "John",
-      age: 20,
-      1337: 32,
-      true: "yes",
-      otherProp: "other",
-    },
-    {
-      id: "2",
-      name: "Jane",
-      age: 21,
-      1337: 32,
-      true: "yes",
-      otherProp: "other",
-    },
-  ]);
-  expect(studentsBy1337AndTrue(32, "no")).toEqual([
-    {
-      id: "5",
-      name: "Jacky",
-      age: 24,
-      1337: 32,
-      true: "no",
-      otherProp: "other",
-    },
-    {
-      id: "6",
-      name: "Jacky",
-      age: 22,
-      1337: 32,
-      true: "no",
-      otherProp: "other",
-    },
-  ]);
-  expect(studentsBy1337AndTrue2(32, "no")).toEqual([
-    {
-      id: "5",
-      name: "Jacky",
-      age: 24,
-      1337: 32,
-      true: "no",
-      otherProp: "other",
-    },
-    {
-      id: "6",
-      name: "Jacky",
-      age: 22,
-      1337: 32,
-      true: "no",
-      otherProp: "other",
-    },
-  ]);
-});
-
-test("allows for keys of type string, number, boolean and treats them as strings with update - reference check", () => {
-  const cruncher = new Cruncher();
-  cruncher.addCollection("students", "id", students2);
-  const studentsBy1337AndTrue = cruncher
-    .view("students")
-    .by(1337 as any, true)
-    .get();
-
-  const yes31 = studentsBy1337AndTrue(31, "yes");
-  const no31 = studentsBy1337AndTrue(31, "no");
-  const yes32 = studentsBy1337AndTrue(32, "yes");
-  const no32 = studentsBy1337AndTrue(32, "no");
-  const newStudents = students.map((student) =>
-    student.id === "1" ? { ...student, 1337: 31 } : student
-  );
-
-  cruncher.update([{ collection: "students", data: newStudents }]);
-  expect(studentsBy1337AndTrue(31, "yes")).toEqual([
-    {
-      id: "3",
-      name: "Jack",
-      age: 21,
-      1337: 31,
-      true: "yes",
-      otherProp: "other",
-    },
-    {
-      id: "1",
-      name: "John",
-      age: 20,
-      1337: 31,
-      true: "yes",
-      otherProp: "other",
-    },
-  ]);
-  expect(studentsBy1337AndTrue(31, "yes")).not.toBe(yes31);
-  expect(studentsBy1337AndTrue(31, "no")).toEqual([
-    {
-      id: "4",
-      name: "Jacky",
-      age: 22,
-      1337: 31,
-      true: "no",
-      otherProp: "other",
-    },
-  ]);
-  expect(studentsBy1337AndTrue(31, "no")).toBe(no31);
-  expect(studentsBy1337AndTrue(32, "yes")).toEqual([
-    {
-      id: "2",
-      name: "Jane",
-      age: 21,
-      1337: 32,
-      true: "yes",
-      otherProp: "other",
-    },
-  ]);
-  expect(studentsBy1337AndTrue(32, "yes")).not.toBe(yes32);
-  expect(studentsBy1337AndTrue(32, "no")).toEqual([
-    {
-      id: "5",
-      name: "Jacky",
-      age: 24,
-      1337: 32,
-      true: "no",
-      otherProp: "other",
-    },
-    {
-      id: "6",
-      name: "Jacky",
-      age: 22,
-      1337: 32,
-      true: "no",
-      otherProp: "other",
-    },
-  ]);
-  expect(studentsBy1337AndTrue(32, "no")).toBe(no32);
+  expect(() =>
+    cruncher
+      .view("students2")
+      .by(1337 as any, true)
+      .get()
+  ).toThrow("A view property must be a string or a function.");
 });
 
 test("takes types of values into account", () => {
@@ -253,9 +62,10 @@ test("group will get the properties value with original type", () => {
   cruncher.addCollection("students", "id", students4);
   const studentsByHappinessAndAge = cruncher
     .view("students")
-    .by("isHappy", "age")
-    .group("isHappy", (happy: Value) => (typeof happy === "string" ? "3" : 3))
-    .group("age", (age: Value) => (typeof age === "string" ? "20" : 20))
+    .by(
+      ({ isHappy }) => (typeof isHappy === "string" ? "3" : 3),
+      ({ age }) => (typeof age === "string" ? "20" : 20)
+    )
     .get();
 
   expect(studentsByHappinessAndAge(3, 20)).toEqual([

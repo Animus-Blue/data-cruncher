@@ -8,7 +8,7 @@ import {
   students5,
   studentsWithHappiness1,
   studentsWithHappiness2,
-} from "./base.testdata";
+} from "./base.fixtures";
 import { TestUtils } from "./testutils";
 
 test("returns correct view", () => {
@@ -19,23 +19,23 @@ test("returns correct view", () => {
     .by("age", "name")
     .get();
 
-  expect(studentsByAgeAndName(20, "John")).toEqual([
-    { id: "1", name: "John", age: 20, otherProp: "other" },
+  expect(studentsByAgeAndName(20, "John A")).toEqual([
+    { id: "1", name: "John A", age: 20, otherProp: "other" },
   ]);
-  expect(studentsByAgeAndName(21, "Jane")).toEqual([
-    { id: "2", name: "Jane", age: 21, otherProp: "other" },
+  expect(studentsByAgeAndName(21, "Jane A")).toEqual([
+    { id: "2", name: "Jane A", age: 21, otherProp: "other" },
   ]);
-  expect(studentsByAgeAndName(21, "Jack")).toEqual([
-    { id: "3", name: "Jack", age: 21, otherProp: "other" },
+  expect(studentsByAgeAndName(21, "Jack A")).toEqual([
+    { id: "3", name: "Jack A", age: 21, otherProp: "other" },
   ]);
   expect(
-    studentsByAgeAndName(22, "Jacky").sort((a, b) => (b.id > a.id ? -1 : 1))
+    studentsByAgeAndName(22, "Jacky A").sort((a, b) => (b.id > a.id ? -1 : 1))
   ).toEqual([
-    { id: "4", name: "Jacky", age: 22, otherProp: "other" },
-    { id: "6", name: "Jacky", age: 22, otherProp: "other" },
+    { id: "4", name: "Jacky A", age: 22, otherProp: "other" },
+    { id: "6", name: "Jacky A", age: 22, otherProp: "other" },
   ]);
-  expect(studentsByAgeAndName(24, "Jacky")).toEqual([
-    { id: "5", name: "Jacky", age: 24, otherProp: "other" },
+  expect(studentsByAgeAndName(24, "Jacky A")).toEqual([
+    { id: "5", name: "Jacky A", age: 24, otherProp: "other" },
   ]);
   expect(TestUtils.getInternalSize(cruncher, "students")).toBe(6);
 });
@@ -56,23 +56,23 @@ test("returns correct view", () => {
     .by("age", "name")
     .get();
 
-  expect(studentsByAgeAndName(20, "John")).toEqual([
-    { id: "1", name: "John", age: 20, otherProp: "other" },
+  expect(studentsByAgeAndName(20, "John A")).toEqual([
+    { id: "1", name: "John A", age: 20, otherProp: "other" },
   ]);
-  expect(studentsByAgeAndName(21, "Jane")).toEqual([
-    { id: "2", name: "Jane", age: 21, otherProp: "other" },
+  expect(studentsByAgeAndName(21, "Jane A")).toEqual([
+    { id: "2", name: "Jane A", age: 21, otherProp: "other" },
   ]);
-  expect(studentsByAgeAndName(21, "Jack")).toEqual([
-    { id: "3", name: "Jack", age: 21, otherProp: "other" },
+  expect(studentsByAgeAndName(21, "Jack A")).toEqual([
+    { id: "3", name: "Jack A", age: 21, otherProp: "other" },
   ]);
   expect(
-    studentsByAgeAndName(22, "Jacky").sort((a, b) => (b.id > a.id ? -1 : 1))
+    studentsByAgeAndName(22, "Jacky A").sort((a, b) => (b.id > a.id ? -1 : 1))
   ).toEqual([
-    { id: "4", name: "Jacky", age: 22, otherProp: "other" },
-    { id: "6", name: "Jacky", age: 22, otherProp: "other" },
+    { id: "4", name: "Jacky A", age: 22, otherProp: "other" },
+    { id: "6", name: "Jacky A", age: 22, otherProp: "other" },
   ]);
-  expect(studentsByAgeAndName(24, "Jacky")).toEqual([
-    { id: "5", name: "Jacky", age: 24, otherProp: "other" },
+  expect(studentsByAgeAndName(24, "Jacky A")).toEqual([
+    { id: "5", name: "Jacky A", age: 24, otherProp: "other" },
   ]);
   expect(TestUtils.getInternalSize(cruncher, "students")).toBe(6);
 });
@@ -86,26 +86,26 @@ test("adds on update", () => {
     .get();
   cruncher.update([{ collection: "students", data: students2 }]);
 
-  expect(studentsByAgeAndName(20, "John")).toEqual([
-    { id: "1", name: "John", age: 20, otherProp: "other" },
+  expect(studentsByAgeAndName(20, "John A")).toEqual([
+    { id: "1", name: "John A", age: 20, otherProp: "other" },
   ]);
-  expect(studentsByAgeAndName(21, "Jane")).toEqual([
-    { id: "2", name: "Jane", age: 21, otherProp: "other" },
+  expect(studentsByAgeAndName(21, "Jane A")).toEqual([
+    { id: "2", name: "Jane A", age: 21, otherProp: "other" },
   ]);
-  expect(studentsByAgeAndName(21, "Jack")).toEqual([
-    { id: "3", name: "Jack", age: 21, otherProp: "other" },
-  ]);
-  expect(
-    studentsByAgeAndName(22, "Jacky").sort((a, b) => (b.id > a.id ? -1 : 1))
-  ).toEqual([
-    { id: "4", name: "Jacky", age: 22, otherProp: "other" },
-    { id: "6", name: "Jacky", age: 22, otherProp: "other" },
+  expect(studentsByAgeAndName(21, "Jack A")).toEqual([
+    { id: "3", name: "Jack A", age: 21, otherProp: "other" },
   ]);
   expect(
-    studentsByAgeAndName(24, "Jacky").sort((a, b) => (b.id > a.id ? -1 : 1))
+    studentsByAgeAndName(22, "Jacky A").sort((a, b) => (b.id > a.id ? -1 : 1))
   ).toEqual([
-    { id: "5", name: "Jacky", age: 24, otherProp: "other" },
-    { id: "7", name: "Jacky", age: 24, otherProp: "other" },
+    { id: "4", name: "Jacky A", age: 22, otherProp: "other" },
+    { id: "6", name: "Jacky A", age: 22, otherProp: "other" },
+  ]);
+  expect(
+    studentsByAgeAndName(24, "Jacky A").sort((a, b) => (b.id > a.id ? -1 : 1))
+  ).toEqual([
+    { id: "5", name: "Jacky A", age: 24, otherProp: "other" },
+    { id: "7", name: "Jacky A", age: 24, otherProp: "other" },
   ]);
   expect(TestUtils.getInternalSize(cruncher, "students")).toBe(7);
 });
@@ -120,21 +120,21 @@ test("deletes on update", () => {
   cruncher.update([{ collection: "students", data: students2 }]);
   cruncher.update([{ collection: "students", data: students3 }]);
 
-  expect(studentsByAgeAndName(20, "John")).toEqual([
-    { id: "1", name: "John", age: 20, otherProp: "other" },
+  expect(studentsByAgeAndName(20, "John A")).toEqual([
+    { id: "1", name: "John A", age: 20, otherProp: "other" },
   ]);
-  expect(studentsByAgeAndName(21, "Jane")).toEqual([
-    { id: "2", name: "Jane", age: 21, otherProp: "other" },
+  expect(studentsByAgeAndName(21, "Jane A")).toEqual([
+    { id: "2", name: "Jane A", age: 21, otherProp: "other" },
   ]);
-  expect(studentsByAgeAndName(21, "Jack")).toEqual([]);
+  expect(studentsByAgeAndName(21, "Jack A")).toEqual([]);
   expect(
-    studentsByAgeAndName(22, "Jacky").sort((a, b) => (b.id > a.id ? -1 : 1))
-  ).toEqual([{ id: "6", name: "Jacky", age: 22, otherProp: "other" }]);
+    studentsByAgeAndName(22, "Jacky A").sort((a, b) => (b.id > a.id ? -1 : 1))
+  ).toEqual([{ id: "6", name: "Jacky A", age: 22, otherProp: "other" }]);
   expect(
-    studentsByAgeAndName(24, "Jacky").sort((a, b) => (b.id > a.id ? -1 : 1))
+    studentsByAgeAndName(24, "Jacky A").sort((a, b) => (b.id > a.id ? -1 : 1))
   ).toEqual([
-    { id: "5", name: "Jacky", age: 24, otherProp: "other" },
-    { id: "7", name: "Jacky", age: 24, otherProp: "other" },
+    { id: "5", name: "Jacky A", age: 24, otherProp: "other" },
+    { id: "7", name: "Jacky A", age: 24, otherProp: "other" },
   ]);
   expect(TestUtils.getInternalSize(cruncher, "students")).toBe(5);
 });
@@ -150,22 +150,22 @@ test("swappes changed items on update", () => {
   cruncher.update([{ collection: "students", data: students3 }]);
   cruncher.update([{ collection: "students", data: students5 }]);
 
-  expect(studentsByAgeAndName(20, "John")).toEqual([
-    { id: "1", name: "John", age: 20, otherProp: "other" },
+  expect(studentsByAgeAndName(20, "John A")).toEqual([
+    { id: "1", name: "John A", age: 20, otherProp: "other" },
   ]);
-  expect(studentsByAgeAndName(21, "Jane")).toEqual([
-    { id: "2", name: "Jane", age: 21, otherProp: "other2" },
+  expect(studentsByAgeAndName(21, "Jane A")).toEqual([
+    { id: "2", name: "Jane A", age: 21, otherProp: "other2" },
   ]);
-  expect(studentsByAgeAndName(21, "Jack")).toEqual([]);
-  expect(studentsByAgeAndName(22, "Jacky")).toEqual([]);
-  expect(studentsByAgeAndName(23, "Jacky")).toEqual([
-    { id: "6", name: "Jacky", age: 23, otherProp: "other" },
+  expect(studentsByAgeAndName(21, "Jack A")).toEqual([]);
+  expect(studentsByAgeAndName(22, "Jacky A")).toEqual([]);
+  expect(studentsByAgeAndName(23, "Jacky A")).toEqual([
+    { id: "6", name: "Jacky A", age: 23, otherProp: "other" },
   ]);
   expect(
-    studentsByAgeAndName(24, "Jacky").sort((a, b) => (b.id > a.id ? -1 : 1))
+    studentsByAgeAndName(24, "Jacky A").sort((a, b) => (b.id > a.id ? -1 : 1))
   ).toEqual([
-    { id: "5", name: "Jacky", age: 24, otherProp: "other" },
-    { id: "7", name: "Jacky", age: 24, otherProp: "other" },
+    { id: "5", name: "Jacky A", age: 24, otherProp: "other" },
+    { id: "7", name: "Jacky A", age: 24, otherProp: "other" },
   ]);
   expect(TestUtils.getInternalSize(cruncher, "students")).toBe(5);
 });
@@ -177,20 +177,20 @@ test("changes references correctly when adding on update", () => {
     .view("students")
     .by("age", "name")
     .get();
-  const john20 = studentsByAgeAndName(20, "John");
-  const jane21 = studentsByAgeAndName(21, "Jane");
-  const jack21 = studentsByAgeAndName(21, "Jack");
-  const jacky22 = studentsByAgeAndName(22, "Jacky");
-  const jacky24 = studentsByAgeAndName(24, "Jacky");
+  const john20 = studentsByAgeAndName(20, "John A");
+  const jane21 = studentsByAgeAndName(21, "Jane A");
+  const jack21 = studentsByAgeAndName(21, "Jack A");
+  const jacky22 = studentsByAgeAndName(22, "Jacky A");
+  const jacky24 = studentsByAgeAndName(24, "Jacky A");
   expect(jacky24).toHaveLength(1);
   cruncher.update([{ collection: "students", data: students2 }]);
-  expect(studentsByAgeAndName(24, "Jacky")).toHaveLength(2);
+  expect(studentsByAgeAndName(24, "Jacky A")).toHaveLength(2);
 
-  expect(studentsByAgeAndName(20, "John")).toBe(john20);
-  expect(studentsByAgeAndName(21, "Jane")).toBe(jane21);
-  expect(studentsByAgeAndName(21, "Jack")).toBe(jack21);
-  expect(studentsByAgeAndName(22, "Jacky")).toBe(jacky22);
-  expect(studentsByAgeAndName(24, "Jacky")).not.toBe(jacky24);
+  expect(studentsByAgeAndName(20, "John A")).toBe(john20);
+  expect(studentsByAgeAndName(21, "Jane A")).toBe(jane21);
+  expect(studentsByAgeAndName(21, "Jack A")).toBe(jack21);
+  expect(studentsByAgeAndName(22, "Jacky A")).toBe(jacky22);
+  expect(studentsByAgeAndName(24, "Jacky A")).not.toBe(jacky24);
   expect(TestUtils.getInternalSize(cruncher, "students")).toBe(7);
 });
 
@@ -201,19 +201,19 @@ test("changes references correctly when adding and deleting on update", () => {
     .view("students")
     .by("age", "name")
     .get();
-  const john20 = studentsByAgeAndName(20, "John");
-  const jane21 = studentsByAgeAndName(21, "Jane");
-  const jack21 = studentsByAgeAndName(21, "Jack");
-  const jacky22 = studentsByAgeAndName(22, "Jacky");
-  const jacky24 = studentsByAgeAndName(24, "Jacky");
+  const john20 = studentsByAgeAndName(20, "John A");
+  const jane21 = studentsByAgeAndName(21, "Jane A");
+  const jack21 = studentsByAgeAndName(21, "Jack A");
+  const jacky22 = studentsByAgeAndName(22, "Jacky A");
+  const jacky24 = studentsByAgeAndName(24, "Jacky A");
   cruncher.update([{ collection: "students", data: students2 }]);
   cruncher.update([{ collection: "students", data: students3 }]);
 
-  expect(studentsByAgeAndName(20, "John")).toBe(john20);
-  expect(studentsByAgeAndName(21, "Jane")).toBe(jane21);
-  expect(studentsByAgeAndName(21, "Jack")).not.toBe(jack21);
-  expect(studentsByAgeAndName(22, "Jacky")).not.toBe(jacky22);
-  expect(studentsByAgeAndName(24, "Jacky")).not.toBe(jacky24);
+  expect(studentsByAgeAndName(20, "John A")).toBe(john20);
+  expect(studentsByAgeAndName(21, "Jane A")).toBe(jane21);
+  expect(studentsByAgeAndName(21, "Jack A")).not.toBe(jack21);
+  expect(studentsByAgeAndName(22, "Jacky A")).not.toBe(jacky22);
+  expect(studentsByAgeAndName(24, "Jacky A")).not.toBe(jacky24);
   expect(TestUtils.getInternalSize(cruncher, "students")).toBe(5);
 });
 
@@ -226,20 +226,20 @@ test("changed references correctly when swapping on update", () => {
     .get();
   cruncher.update([{ collection: "students", data: students2 }]);
   cruncher.update([{ collection: "students", data: students3 }]);
-  const john20 = studentsByAgeAndName(20, "John");
-  const jane21 = studentsByAgeAndName(21, "Jane");
-  const jack21 = studentsByAgeAndName(21, "Jack");
-  const jacky22 = studentsByAgeAndName(22, "Jacky");
-  const jacky23 = studentsByAgeAndName(23, "Jacky");
-  const jacky24 = studentsByAgeAndName(24, "Jacky");
+  const john20 = studentsByAgeAndName(20, "John A");
+  const jane21 = studentsByAgeAndName(21, "Jane A");
+  const jack21 = studentsByAgeAndName(21, "Jack A");
+  const jacky22 = studentsByAgeAndName(22, "Jacky A");
+  const jacky23 = studentsByAgeAndName(23, "Jacky A");
+  const jacky24 = studentsByAgeAndName(24, "Jacky A");
   cruncher.update([{ collection: "students", data: students5 }]);
 
-  expect(studentsByAgeAndName(20, "John")).toBe(john20);
-  expect(studentsByAgeAndName(21, "Jane")).not.toBe(jane21);
-  expect(studentsByAgeAndName(21, "Jack")).toBe(jack21);
-  expect(studentsByAgeAndName(22, "Jacky")).not.toBe(jacky22);
-  expect(studentsByAgeAndName(23, "Jacky")).not.toBe(jacky23);
-  expect(studentsByAgeAndName(24, "Jacky")).toBe(jacky24);
+  expect(studentsByAgeAndName(20, "John A")).toBe(john20);
+  expect(studentsByAgeAndName(21, "Jane A")).not.toBe(jane21);
+  expect(studentsByAgeAndName(21, "Jack A")).toBe(jack21);
+  expect(studentsByAgeAndName(22, "Jacky A")).not.toBe(jacky22);
+  expect(studentsByAgeAndName(23, "Jacky A")).not.toBe(jacky23);
+  expect(studentsByAgeAndName(24, "Jacky A")).toBe(jacky24);
   expect(TestUtils.getInternalSize(cruncher, "students")).toBe(5);
 });
 
@@ -251,23 +251,23 @@ test("ignores null or undefined values needed for view", () => {
     .by("age", "name")
     .get();
 
-  expect(studentsByAgeAndName(20, "John")).toEqual([
-    { id: "1", name: "John", age: 20, otherProp: "other" },
+  expect(studentsByAgeAndName(20, "John A")).toEqual([
+    { id: "1", name: "John A", age: 20, otherProp: "other" },
   ]);
-  expect(studentsByAgeAndName(21, "Jane")).toEqual([
-    { id: "2", name: "Jane", age: 21, otherProp: "other" },
+  expect(studentsByAgeAndName(21, "Jane A")).toEqual([
+    { id: "2", name: "Jane A", age: 21, otherProp: "other" },
   ]);
-  expect(studentsByAgeAndName(21, "Jack")).toEqual([
-    { id: "3", name: "Jack", age: 21, otherProp: "other" },
+  expect(studentsByAgeAndName(21, "Jack A")).toEqual([
+    { id: "3", name: "Jack A", age: 21, otherProp: "other" },
   ]);
   expect(
-    studentsByAgeAndName(22, "Jacky").sort((a, b) => (b.id > a.id ? -1 : 1))
+    studentsByAgeAndName(22, "Jacky A").sort((a, b) => (b.id > a.id ? -1 : 1))
   ).toEqual([
-    { id: "4", name: "Jacky", age: 22, otherProp: "other" },
-    { id: "6", name: "Jacky", age: 22, otherProp: "other" },
+    { id: "4", name: "Jacky A", age: 22, otherProp: "other" },
+    { id: "6", name: "Jacky A", age: 22, otherProp: "other" },
   ]);
-  expect(studentsByAgeAndName(24, "Jacky")).toEqual([
-    { id: "5", name: "Jacky", age: 24, otherProp: "other" },
+  expect(studentsByAgeAndName(24, "Jacky A")).toEqual([
+    { id: "5", name: "Jacky A", age: 24, otherProp: "other" },
   ]);
   expect(studentsByAgeAndName(22, null as any)).toEqual([]);
   expect(studentsByAgeAndName(undefined as any, "Maria")).toEqual([]);
@@ -282,23 +282,23 @@ test("ignores null or undefined values needed for view when adding values", () =
     .get();
   cruncher.update([{ collection: "students", data: students4 }]);
 
-  expect(studentsByAgeAndName(20, "John")).toEqual([
-    { id: "1", name: "John", age: 20, otherProp: "other" },
+  expect(studentsByAgeAndName(20, "John A")).toEqual([
+    { id: "1", name: "John A", age: 20, otherProp: "other" },
   ]);
-  expect(studentsByAgeAndName(21, "Jane")).toEqual([
-    { id: "2", name: "Jane", age: 21, otherProp: "other" },
+  expect(studentsByAgeAndName(21, "Jane A")).toEqual([
+    { id: "2", name: "Jane A", age: 21, otherProp: "other" },
   ]);
-  expect(studentsByAgeAndName(21, "Jack")).toEqual([
-    { id: "3", name: "Jack", age: 21, otherProp: "other" },
+  expect(studentsByAgeAndName(21, "Jack A")).toEqual([
+    { id: "3", name: "Jack A", age: 21, otherProp: "other" },
   ]);
   expect(
-    studentsByAgeAndName(22, "Jacky").sort((a, b) => (b.id > a.id ? -1 : 1))
+    studentsByAgeAndName(22, "Jacky A").sort((a, b) => (b.id > a.id ? -1 : 1))
   ).toEqual([
-    { id: "4", name: "Jacky", age: 22, otherProp: "other" },
-    { id: "6", name: "Jacky", age: 22, otherProp: "other" },
+    { id: "4", name: "Jacky A", age: 22, otherProp: "other" },
+    { id: "6", name: "Jacky A", age: 22, otherProp: "other" },
   ]);
-  expect(studentsByAgeAndName(24, "Jacky")).toEqual([
-    { id: "5", name: "Jacky", age: 24, otherProp: "other" },
+  expect(studentsByAgeAndName(24, "Jacky A")).toEqual([
+    { id: "5", name: "Jacky A", age: 24, otherProp: "other" },
   ]);
   expect(studentsByAgeAndName(22, null as any)).toEqual([]);
   expect(studentsByAgeAndName(undefined as any, "Maria")).toEqual([]);
@@ -316,23 +316,23 @@ test("ignores null or undefined values needed for view when deleting values", ()
 
   // cruncher does not crash
 
-  expect(studentsByAgeAndName(20, "John")).toEqual([
-    { id: "1", name: "John", age: 20, otherProp: "other" },
+  expect(studentsByAgeAndName(20, "John A")).toEqual([
+    { id: "1", name: "John A", age: 20, otherProp: "other" },
   ]);
-  expect(studentsByAgeAndName(21, "Jane")).toEqual([
-    { id: "2", name: "Jane", age: 21, otherProp: "other" },
+  expect(studentsByAgeAndName(21, "Jane A")).toEqual([
+    { id: "2", name: "Jane A", age: 21, otherProp: "other" },
   ]);
-  expect(studentsByAgeAndName(21, "Jack")).toEqual([
-    { id: "3", name: "Jack", age: 21, otherProp: "other" },
+  expect(studentsByAgeAndName(21, "Jack A")).toEqual([
+    { id: "3", name: "Jack A", age: 21, otherProp: "other" },
   ]);
   expect(
-    studentsByAgeAndName(22, "Jacky").sort((a, b) => (b.id > a.id ? -1 : 1))
+    studentsByAgeAndName(22, "Jacky A").sort((a, b) => (b.id > a.id ? -1 : 1))
   ).toEqual([
-    { id: "4", name: "Jacky", age: 22, otherProp: "other" },
-    { id: "6", name: "Jacky", age: 22, otherProp: "other" },
+    { id: "4", name: "Jacky A", age: 22, otherProp: "other" },
+    { id: "6", name: "Jacky A", age: 22, otherProp: "other" },
   ]);
-  expect(studentsByAgeAndName(24, "Jacky")).toEqual([
-    { id: "5", name: "Jacky", age: 24, otherProp: "other" },
+  expect(studentsByAgeAndName(24, "Jacky A")).toEqual([
+    { id: "5", name: "Jacky A", age: 24, otherProp: "other" },
   ]);
 });
 
@@ -345,23 +345,23 @@ test("ignores null or undefined values needed for view when adding values", () =
     .get();
   cruncher.update([{ collection: "students", data: students4 }]);
 
-  expect(studentsByAgeAndName(20, "John")).toEqual([
-    { id: "1", name: "John", age: 20, otherProp: "other" },
+  expect(studentsByAgeAndName(20, "John A")).toEqual([
+    { id: "1", name: "John A", age: 20, otherProp: "other" },
   ]);
-  expect(studentsByAgeAndName(21, "Jane")).toEqual([
-    { id: "2", name: "Jane", age: 21, otherProp: "other" },
+  expect(studentsByAgeAndName(21, "Jane A")).toEqual([
+    { id: "2", name: "Jane A", age: 21, otherProp: "other" },
   ]);
-  expect(studentsByAgeAndName(21, "Jack")).toEqual([
-    { id: "3", name: "Jack", age: 21, otherProp: "other" },
+  expect(studentsByAgeAndName(21, "Jack A")).toEqual([
+    { id: "3", name: "Jack A", age: 21, otherProp: "other" },
   ]);
   expect(
-    studentsByAgeAndName(22, "Jacky").sort((a, b) => (b.id > a.id ? -1 : 1))
+    studentsByAgeAndName(22, "Jacky A").sort((a, b) => (b.id > a.id ? -1 : 1))
   ).toEqual([
-    { id: "4", name: "Jacky", age: 22, otherProp: "other" },
-    { id: "6", name: "Jacky", age: 22, otherProp: "other" },
+    { id: "4", name: "Jacky A", age: 22, otherProp: "other" },
+    { id: "6", name: "Jacky A", age: 22, otherProp: "other" },
   ]);
-  expect(studentsByAgeAndName(24, "Jacky")).toEqual([
-    { id: "5", name: "Jacky", age: 24, otherProp: "other" },
+  expect(studentsByAgeAndName(24, "Jacky A")).toEqual([
+    { id: "5", name: "Jacky A", age: 24, otherProp: "other" },
   ]);
   expect(studentsByAgeAndName(22, null as any)).toEqual([]);
   expect(studentsByAgeAndName(undefined as any, "Maria")).toEqual([]);
@@ -374,37 +374,37 @@ test("getById returns correct item", () => {
 
   expect(studentsById("1")).toEqual({
     id: "1",
-    name: "John",
+    name: "John A",
     age: 20,
     otherProp: "other",
   });
   expect(studentsById("2")).toEqual({
     id: "2",
-    name: "Jane",
+    name: "Jane A",
     age: 21,
     otherProp: "other",
   });
   expect(studentsById("3")).toEqual({
     id: "3",
-    name: "Jack",
+    name: "Jack A",
     age: 21,
     otherProp: "other",
   });
   expect(studentsById("4")).toEqual({
     id: "4",
-    name: "Jacky",
+    name: "Jacky A",
     age: 22,
     otherProp: "other",
   });
   expect(studentsById("5")).toEqual({
     id: "5",
-    name: "Jacky",
+    name: "Jacky A",
     age: 24,
     otherProp: "other",
   });
   expect(studentsById("6")).toEqual({
     id: "6",
-    name: "Jacky",
+    name: "Jacky A",
     age: 22,
     otherProp: "other",
   });
@@ -419,13 +419,13 @@ test("getById returns correct items after update", () => {
 
   expect(studentsById("1")).toEqual({
     id: "1",
-    name: "John",
+    name: "John A",
     age: 20,
     otherProp: "other",
   });
   expect(studentsById("2")).toEqual({
     id: "2",
-    name: "Jane",
+    name: "Jane A",
     age: 21,
     otherProp: "other2",
   });
@@ -433,19 +433,19 @@ test("getById returns correct items after update", () => {
   expect(studentsById("4")).toEqual(undefined);
   expect(studentsById("5")).toEqual({
     id: "5",
-    name: "Jacky",
+    name: "Jacky A",
     age: 24,
     otherProp: "other",
   });
   expect(studentsById("6")).toEqual({
     id: "6",
-    name: "Jacky",
+    name: "Jacky A",
     age: 23,
     otherProp: "other",
   });
   expect(studentsById("7")).toEqual({
     id: "7",
-    name: "Jacky",
+    name: "Jacky A",
     age: 24,
     otherProp: "other",
   });
@@ -506,11 +506,10 @@ test("can get view with up to ten keys", () => {
       .view("collection1")
       .by(...keys)
       .get();
-    const viewWithGroupingAndTransformation = cruncher
+    const viewWithTransformation = cruncher
       .view("collection1")
       .by(...keys)
       .transform((item) => ({ ...item, foo: "bar" }))
-      .group("prop1", (prop) => prop, false)
       .get();
 
     expect(view(...values1)).toEqual([
@@ -556,7 +555,7 @@ test("can get view with up to ten keys", () => {
         prop10: "value prop 10",
       },
     ]);
-    expect(viewWithGroupingAndTransformation(...values1)).toEqual([
+    expect(viewWithTransformation(...values1)).toEqual([
       {
         id: "1",
         prop1: "value prop 1",
@@ -586,7 +585,7 @@ test("can get view with up to ten keys", () => {
         foo: "bar",
       },
     ]);
-    expect(viewWithGroupingAndTransformation(...values2)).toEqual([
+    expect(viewWithTransformation(...values2)).toEqual([
       {
         id: "3",
         prop1: "other value prop 1",
@@ -615,21 +614,21 @@ test("deletes on update", () => {
   cruncher.update([{ collection: "students", data: students2 }]);
   cruncher.update([{ collection: "students", data: students3 }]);
 
-  expect(studentsByAgeAndName(20, "John")).toEqual([
-    { id: "1", name: "John", age: 20, otherProp: "other" },
+  expect(studentsByAgeAndName(20, "John A")).toEqual([
+    { id: "1", name: "John A", age: 20, otherProp: "other" },
   ]);
-  expect(studentsByAgeAndName(21, "Jane")).toEqual([
-    { id: "2", name: "Jane", age: 21, otherProp: "other" },
+  expect(studentsByAgeAndName(21, "Jane A")).toEqual([
+    { id: "2", name: "Jane A", age: 21, otherProp: "other" },
   ]);
-  expect(studentsByAgeAndName(21, "Jack")).toEqual([]);
+  expect(studentsByAgeAndName(21, "Jack A")).toEqual([]);
   expect(
-    studentsByAgeAndName(22, "Jacky").sort((a, b) => (b.id > a.id ? -1 : 1))
-  ).toEqual([{ id: "6", name: "Jacky", age: 22, otherProp: "other" }]);
+    studentsByAgeAndName(22, "Jacky A").sort((a, b) => (b.id > a.id ? -1 : 1))
+  ).toEqual([{ id: "6", name: "Jacky A", age: 22, otherProp: "other" }]);
   expect(
-    studentsByAgeAndName(24, "Jacky").sort((a, b) => (b.id > a.id ? -1 : 1))
+    studentsByAgeAndName(24, "Jacky A").sort((a, b) => (b.id > a.id ? -1 : 1))
   ).toEqual([
-    { id: "5", name: "Jacky", age: 24, otherProp: "other" },
-    { id: "7", name: "Jacky", age: 24, otherProp: "other" },
+    { id: "5", name: "Jacky A", age: 24, otherProp: "other" },
+    { id: "7", name: "Jacky A", age: 24, otherProp: "other" },
   ]);
   expect(TestUtils.getInternalSize(cruncher, "students")).toBe(5);
 });
@@ -642,24 +641,24 @@ test("can do views on booleans", () => {
   const happyStudents = studentsByHappiness(true);
   const unhappyStudents = studentsByHappiness(false);
   expect(happyStudents).toEqual([
-    { id: "1", name: "John", age: 20, isHappy: true },
-    { id: "2", name: "Jane", age: 21, isHappy: true },
-    { id: "6", name: "Jacky", age: 23, isHappy: true },
-    { id: "7", name: "Jacky", age: 24, isHappy: true },
+    { id: "1", name: "John A", age: 20, isHappy: true },
+    { id: "2", name: "Jane A", age: 21, isHappy: true },
+    { id: "6", name: "Jacky A", age: 23, isHappy: true },
+    { id: "7", name: "Jacky A", age: 24, isHappy: true },
   ]);
   expect(unhappyStudents).toEqual([
-    { id: "5", name: "Jacky", age: 24, isHappy: false },
+    { id: "5", name: "Jacky A", age: 24, isHappy: false },
   ]);
   cruncher.update([{ collection: "students", data: studentsWithHappiness2 }]);
   expect(studentsByHappiness(true)).toEqual([
-    { id: "1", name: "John", age: 20, isHappy: true },
-    { id: "2", name: "Jane", age: 21, isHappy: true },
-    { id: "6", name: "Jacky", age: 23, isHappy: true },
-    { id: "7", name: "Jacky", age: 24, isHappy: true },
+    { id: "1", name: "John A", age: 20, isHappy: true },
+    { id: "2", name: "Jane A", age: 21, isHappy: true },
+    { id: "6", name: "Jacky A", age: 23, isHappy: true },
+    { id: "7", name: "Jacky A", age: 24, isHappy: true },
   ]);
   expect(studentsByHappiness(false)).toEqual([
-    { id: "5", name: "Jacky", age: 24, isHappy: false },
-    { id: "8", name: "Kelly", age: 21, isHappy: false },
+    { id: "5", name: "Jacky A", age: 24, isHappy: false },
+    { id: "8", name: "Kelly A", age: 21, isHappy: false },
   ]);
   expect(studentsByHappiness(true)).toBe(happyStudents);
   expect(studentsByHappiness(false)).not.toBe(unhappyStudents);

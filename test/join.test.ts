@@ -14,7 +14,7 @@ import {
   teachers1,
   teachers2,
   teachers3,
-} from "./join.testdata";
+} from "./join.fixtures";
 import { TestUtils } from "./testutils";
 
 test("returns correct views", () => {
@@ -3362,18 +3362,15 @@ test("returns identical view if it has been created before with joins and groupi
     .get();
   const studentsBySchoolAndAge3 = cruncher
     .view("students")
-    .by("school", "age")
-    .group("schools", myGrouping)
+    .by("school", "age", myGrouping)
     .get();
   const studentsBySchoolAndAge4 = cruncher
     .view("students")
-    .by("school", "age")
-    .group("schools", myGrouping)
+    .by("school", "age", myGrouping)
     .get();
   const studentsBySchoolAndAge5 = cruncher
     .view("students")
-    .by("school", "age")
-    .group("schools", () => 42)
+    .by("school", "age", () => 42)
     .get();
 
   expect(studentsBySchoolAndAge1).toBe(studentsBySchoolAndAge2);
@@ -3404,84 +3401,42 @@ test("returns identical view if it has been created before with joins and groupi
     .get();
   const studentsBySchoolAndAge3 = cruncher
     .view("students")
-    .by("school", "age")
-    .group("schools", myGrouping)
+    .by("school", "age", myGrouping)
     .get();
   const studentsBySchoolAndAge4 = cruncher
     .view("students")
-    .by("school", "age")
-    .group("schools", myGrouping)
+    .by("school", "age", myGrouping)
     .get();
   const studentsBySchoolAndAge5 = cruncher
     .view("students")
-    .by("school", "age")
-    .group("schools", () => 42)
+    .by("school", "age", () => 42)
     .get();
   const studentsBySchoolAndAge6 = cruncher
     .view("students")
-    .by("school", "age")
-    .group("schools", myGrouping)
+    .by("school", "age", myGrouping)
     .transform(myTransformation)
     .get();
   const studentsBySchoolAndAge7 = cruncher
     .view("students")
-    .by("school", "age")
-    .group("schools", myGrouping)
+    .by("school", "age", myGrouping)
     .transform(myTransformation)
     .get();
   const studentsBySchoolAndAge8 = cruncher
     .view("students")
-    .by("school", "age")
-    .group("schools", myGrouping)
+    .by("school", "age", myGrouping)
     .transform(() => {
       value: 42;
     })
     .get();
   const studentsBySchoolAndAge9 = cruncher
     .view("students")
-    .by("school", "age")
-    .group("schools", myGrouping)
-    .group("name", myGrouping2)
+    .by("school", "age", myGrouping, myGrouping2)
     .transform(myTransformation)
     .get();
   const studentsBySchoolAndAge10 = cruncher
     .view("students")
-    .by("school", "age")
+    .by("school", "age", myGrouping, myGrouping2)
     .transform(myTransformation)
-    .group("name", myGrouping2)
-    .group("schools", myGrouping)
-    .get();
-  const studentsBySchoolAndAge11 = cruncher
-    .view("students")
-    .by("school", "age")
-    .transform(myTransformation)
-    .group("name", myGrouping2, false)
-    .group("schools", myGrouping)
-    .get();
-  const studentsBySchoolAndAge12 = cruncher
-    .view("students")
-    .by("school", "age")
-    .join("schools", "school")
-    .transform(myTransformation)
-    .group("name", myGrouping2, false)
-    .group("schools", myGrouping)
-    .get();
-  const studentsBySchoolAndAge13 = cruncher
-    .view("students")
-    .by("school", "age")
-    .join("schools", "school")
-    .transform(myTransformation)
-    .group("name", myGrouping2, false)
-    .group("schools", myGrouping)
-    .get();
-  const studentsBySchoolAndAge14 = cruncher
-    .view("students")
-    .by("school", "age")
-    .join("schools", "school")
-    .join("teachers", "teacher")
-    .transform(myTransformation)
-    .group("name", myGrouping2, false)
-    .group("schools", myGrouping)
     .get();
 
   expect(studentsBySchoolAndAge1).toBe(studentsBySchoolAndAge2);
@@ -3493,7 +3448,4 @@ test("returns identical view if it has been created before with joins and groupi
   expect(studentsBySchoolAndAge6).not.toBe(studentsBySchoolAndAge8);
   expect(studentsBySchoolAndAge8).not.toBe(studentsBySchoolAndAge9);
   expect(studentsBySchoolAndAge9).toBe(studentsBySchoolAndAge10);
-  expect(studentsBySchoolAndAge9).not.toBe(studentsBySchoolAndAge11);
-  expect(studentsBySchoolAndAge12).toBe(studentsBySchoolAndAge13);
-  expect(studentsBySchoolAndAge13).not.toBe(studentsBySchoolAndAge14);
 });

@@ -4,7 +4,7 @@ const EMPTY_ARRAY = [];
 
 function getSingleItemGetter(
   data: Map<Value, any>,
-  properties: string[]
+  properties: (string | ((item: any) => string | number | boolean))[]
 ): (...args: Value[]) => any {
   switch (properties.length) {
     case 0:
@@ -18,7 +18,7 @@ function getSingleItemGetter(
 
 function getGetter(
   data: Map<Value, any>,
-  properties: string[]
+  properties: (string | ((item: any) => string | number | boolean))[]
 ): (...args: Value[]) => any[] {
   switch (properties.length) {
     case 1:
@@ -100,105 +100,6 @@ function getGetter(
   }
 }
 
-function getGetterWithGrouping(
-  data: any,
-  properties: string[],
-  argumentToGroupsMap: {
-    [property: string]: (arg: Value) => Value;
-  }
-): (...args: Value[]) => any[] {
-  const group = properties.map((property, index) =>
-    argumentToGroupsMap[property]
-      ? (arg) => argumentToGroupsMap[property](arg[index])
-      : (arg) => arg[index]
-  );
-  switch (properties.length) {
-    case 0:
-      return (...args) => data || EMPTY_ARRAY;
-    case 1:
-      return (...args) => data.get(group[0](args)) || EMPTY_ARRAY;
-    case 2:
-      return (...args) =>
-        data.get(group[0](args))?.get(group[1](args)) || EMPTY_ARRAY;
-    case 3:
-      return (...args) =>
-        data.get(group[0](args))?.get(group[1](args))?.get(group[2](args)) ||
-        EMPTY_ARRAY;
-    case 4:
-      return (...args) =>
-        data
-          .get(group[0](args))
-          ?.get(group[1](args))
-          ?.get(group[2](args))
-          ?.get(group[3](args)) || EMPTY_ARRAY;
-    case 5:
-      return (...args) =>
-        data
-          .get(group[0](args))
-          ?.get(group[1](args))
-          ?.get(group[2](args))
-          ?.get(group[3](args))
-          ?.get(group[4](args)) || EMPTY_ARRAY;
-    case 6:
-      return (...args) =>
-        data
-          .get(group[0](args))
-          ?.get(group[1](args))
-          ?.get(group[2](args))
-          ?.get(group[3](args))
-          ?.get(group[4](args))
-          ?.get(group[5](args)) || EMPTY_ARRAY;
-    case 7:
-      return (...args) =>
-        data
-          .get(group[0](args))
-          ?.get(group[1](args))
-          ?.get(group[2](args))
-          ?.get(group[3](args))
-          ?.get(group[4](args))
-          ?.get(group[5](args))
-          ?.get(group[6](args)) || EMPTY_ARRAY;
-    case 8:
-      return (...args) =>
-        data
-          .get(group[0](args))
-          ?.get(group[1](args))
-          ?.get(group[2](args))
-          ?.get(group[3](args))
-          ?.get(group[4](args))
-          ?.get(group[5](args))
-          ?.get(group[6](args))
-          ?.get(group[7](args)) || EMPTY_ARRAY;
-    case 9:
-      return (...args) =>
-        data
-          .get(group[0](args))
-          ?.get(group[1](args))
-          ?.get(group[2](args))
-          ?.get(group[3](args))
-          ?.get(group[4](args))
-          ?.get(group[5](args))
-          ?.get(group[6](args))
-          ?.get(group[7](args))
-          ?.get(group[8](args)) || EMPTY_ARRAY;
-    case 10:
-      return (...args) =>
-        data
-          .get(group[0](args))
-          ?.get(group[1](args))
-          ?.get(group[2](args))
-          ?.get(group[3](args))
-          ?.get(group[4](args))
-          ?.get(group[5](args))
-          ?.get(group[6](args))
-          ?.get(group[7](args))
-          ?.get(group[8](args))
-          ?.get(group[9](args)) || EMPTY_ARRAY;
-    default:
-      throw new Error("Not implemented");
-  }
-}
-
 function getJoinAndTransform(
   joins:
     | {
@@ -265,45 +166,4 @@ function executeJoin(
   }
 }
 
-function getPathGetter(
-  properties: string[],
-  groupings,
-  pathToGroup: {
-    [property: string]: (value: Value) => Value | undefined | null;
-  }
-): (item: any) => Value[] | null {
-  if (!groupings) {
-    return (item: any) => {
-      const path: Value[] = [];
-      for (const property of properties) {
-        const pathItem = item[property];
-        if (pathItem === null || pathItem === undefined) {
-          return null;
-        }
-        path.push(pathItem);
-      }
-      return path;
-    };
-  }
-  return (item: any) => {
-    const path: Value[] = [];
-    for (const property of properties) {
-      const pathItem = pathToGroup[property]
-        ? pathToGroup[property](item[property])
-        : item[property];
-      if (pathItem === null || pathItem === undefined) {
-        return null;
-      }
-      path.push(pathItem);
-    }
-    return path;
-  };
-}
-
-export {
-  getGetter,
-  getPathGetter,
-  getJoinAndTransform,
-  getGetterWithGrouping,
-  getSingleItemGetter,
-};
+export { getGetter, getJoinAndTransform, getSingleItemGetter };

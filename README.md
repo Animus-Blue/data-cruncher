@@ -46,6 +46,29 @@ Use the update method and pass it the updated collection data. The view will ret
 It's perfect for use with React, since the **reference equality** helps avoid unnecessary rerenders.<br>
 [docs on collections and updates](./docs/collections-and-updates.md#update-data)
 
+## Use nested properties and custom functions to create views
+
+```js
+const cruncher = new Cruncher();
+cruncher.addCollection("students", "id", students);
+
+const studentsBySchoolAndGroup = cruncher
+  .view("students")
+  .by("school", (student) => (student.age > 21 ? "senior" : "junior"))
+  .get();
+
+const seniors = studentsBySchoolAndGroup("school1", "senior");
+
+const studentsByCityAndAge = cruncher
+  .view("students")
+  .by("address.city", "age")
+  .get();
+
+const newYorkers = studentsByCityAndAge("New York City", 20);
+```
+
+[docs on nested properties and custom functions](./docs/views.md#nested-properties-and-custom-functions)
+
 ## Add joins
 
 ```js
@@ -84,23 +107,6 @@ const fullFilled = ordersByCustomerAndStatus("customer1", "FullFilled");
 
 Your returned objects will be transformed. You can use full objects from your joins for your transformation.<br>
 [docs on transformations](./docs/views.md#transformations)
-
-## Add groupings
-
-```js
-const cruncher = new Cruncher();
-cruncher.addCollection("products", "id", products);
-
-const productsByCategoryAndPrice = cruncher
-  .view("products")
-  .by("category", "price")
-  .group("price", (price) => (price < 20 ? "cheap" : "expensive"))
-  .get();
-
-const expensive = productsByCategoryAndPrice("sports", "expensive");
-```
-
-[docs on groupings](./docs/views.md#groupings)
 
 ## Query Objects by Id
 

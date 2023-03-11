@@ -1,27 +1,9 @@
 import { Value } from "../cruncher";
 
-type UnwrapArray<T extends [...any[]]> = T extends [infer Head, ...infer Tail]
-  ? [Head, ...UnwrapArray<Tail>]
-  : [];
-
-export type Grouping<
-  T extends { [property: string]: any },
-  K extends Array<keyof T>,
-  S
-> = K extends [infer Head, ...infer Tail]
-  ? {
-      [property: string]: undefined | Grouping<T, UnwrapArray<Tail>, S>;
-    }
-  : undefined | S[];
-
-function group<
-  T extends { [property: string]: any },
-  K extends Array<keyof T>,
-  S
->(
+function group(
   data: Map<Value, any>,
-  array: T[],
-  transformation: (item: T) => S,
+  array: any[],
+  transformation: (item: any) => any,
   getPath
 ): void {
   for (const item of array) {

@@ -7,7 +7,7 @@ import {
   teachers1,
   teachers2,
   teachers3,
-} from "./joinMultiple.testdata";
+} from "./joinMultiple.fixtures";
 import { TestUtils } from "./testutils";
 
 test("returns correct views with multiple joins to the same collection", () => {

@@ -1,13 +1,11 @@
-import { group, normalize, normalizeAfterProp } from "../transformations";
-import {
-  getGetter,
-  getGetterWithGrouping,
-  getJoinAndTransform,
-  getPathGetter,
-  getSingleItemGetter,
-} from "./utils";
+import { getGetter, getJoinAndTransform, getSingleItemGetter } from "./utils";
 import equal from "../transformations/equal";
 import { getAlreadyPresentViews } from "./verifyViews";
+import create from "../view/create";
+import getDeleteFromView from "../view/delete";
+import getAddToView from "../view/add";
+import getRefresh from "../view/refresh";
+import { pathGetter } from "../view/utils";
 
 export type Value = string | number | boolean;
 
@@ -30,9 +28,8 @@ export interface Grouping {
 
 export interface ViewOptions {
   collection: string;
-  properties: string[];
+  properties: (string | ((item: any) => string | number | boolean))[];
   joins?: Join[];
-  groupings?: Grouping[];
   transformation?: (item: any) => any;
   returnSingleItemWithoutGrouping?: boolean;
 }
@@ -46,13 +43,15 @@ interface View {
   collection: string;
   isInitialized: boolean;
   transformation?: (item: any) => any;
-  groupings?: Grouping[];
   joins?: Join[];
   joinAndTransform: (item: any) => any;
-  properties: string[];
+  properties: (string | ((item: any) => string | number | boolean))[];
   data: Map<Value, any>;
   getPath: (item: any) => Value[] | null;
   view: (...args: Value[]) => any;
+  deleteFromView: (deleteList: Map<string, any>) => void;
+  addToView: (addList: any[], additionalAddList: any[]) => void;
+  refresh: (refreshList: Map<string, any>) => void;
 }
 
 class Cruncher {
@@ -112,27 +111,8 @@ class Cruncher {
         }
       }
     }
-
-    const pathToGroup: {
-      [property: string]: (value: Value) => Value | undefined | null;
-    } = {};
-    options.groupings?.forEach((grouping) => {
-      const cache: Map<Value, Value> = new Map();
-      pathToGroup[grouping.property] = (value) => {
-        if (value === null || value === undefined) {
-          return value;
-        }
-        if (!cache.has(value)) {
-          cache.set(value, grouping.groupingFunction(value));
-        }
-        return cache.get(value);
-      };
-    });
-    const getPath: (item: any) => Value[] | null = getPathGetter(
-      properties,
-      options.groupings,
-      pathToGroup
-    );
+    const getPath: (item: any) => Value[] | null = pathGetter(properties);
+    // TODO: make optional
     const joinAndTransform = getJoinAndTransform(
       options.joins,
       options.transformation,
@@ -140,41 +120,33 @@ class Cruncher {
       this.normalizedCollections
     );
     const data: Map<Value, any> = new Map();
-    group(
+    create(
       data,
       this.collections.get(options.collection)!.data,
-      joinAndTransform,
-      getPath
+      options.properties,
+      joinAndTransform
     );
     let view: (...args: Value[]) => any;
-    const argumentToGroupsMap = {};
-    options.groupings?.forEach((grouping) => {
-      if (!grouping.useGroupsAsParameter) {
-        argumentToGroupsMap[grouping.property] = pathToGroup[grouping.property];
-      }
-    });
+
     if (options.returnSingleItemWithoutGrouping) {
       view = getSingleItemGetter(data, properties) as (...args: Value[]) => any;
     } else {
-      if (Object.keys(argumentToGroupsMap).length > 0) {
-        view = getGetterWithGrouping(data, properties, argumentToGroupsMap) as (
-          ...args: Value[]
-        ) => any[];
-      } else {
-        view = getGetter(data, properties);
-      }
+      view = getGetter(data, properties);
     }
+    const refresh = getRefresh(data, properties, idProperty!, joinAndTransform);
     const newView: View = {
       collection: options.collection,
       isInitialized: this.collections.get(options.collection)!.data.length > 0,
       transformation: options.transformation,
-      groupings: options.groupings,
       joins: options.joins,
       joinAndTransform,
       properties: properties,
       data,
       view: view,
       getPath,
+      deleteFromView: getDeleteFromView(data, properties, idProperty!),
+      addToView: getAddToView(data, properties, joinAndTransform),
+      refresh,
     };
     this.views.push(newView);
     return view;
@@ -276,19 +248,21 @@ class Cruncher {
       if (!view.isInitialized) {
         const ts = this.collections.get(view.collection)!.data;
         if (ts.length > 0) {
-          group(
+          create(
             view.data,
             this.collections.get(view.collection)!.data,
-            view.joinAndTransform,
-            view.getPath
+            view.properties,
+            view.joinAndTransform
           );
           view.isInitialized = true;
         }
       } else {
-        const ownIdProperty = this.collections.get(view.collection)!.idProperty;
         const references = this.references.get(view.collection);
+        const normalizedCollection = this.normalizedCollections.get(
+          view.collection
+        )!;
         let ownMutation: Mutation | undefined;
-        const toBeCheckedForChanges: Map<string, true> = new Map();
+        const refreshList: Map<string, any> = new Map();
         for (const mutation of mutations) {
           if (mutation.collection === view.collection) {
             ownMutation = mutation;
@@ -302,22 +276,21 @@ class Cruncher {
                 const foreignIdProperty = this.collections.get(
                   mutation.collection
                 )!.idProperty;
+                let currentRef: any;
                 for (const t of mutation.added) {
-                  if (refs.has(t[foreignIdProperty])) {
-                    refs
-                      .get(t[foreignIdProperty])!
-                      .forEach((_, ownId) =>
-                        toBeCheckedForChanges.set(ownId, true)
-                      );
+                  currentRef = refs.get(t[foreignIdProperty]);
+                  if (currentRef !== undefined) {
+                    currentRef.forEach((_, ownId) =>
+                      refreshList.set(ownId, normalizedCollection.get(ownId))
+                    );
                   }
                 }
-                for (const [id, singleMutation] of mutation.mutations) {
-                  if (refs.has(id)) {
-                    refs
-                      .get(id)!
-                      .forEach((_, ownId) =>
-                        toBeCheckedForChanges.set(ownId, true)
-                      );
+                for (const [id] of mutation.mutations) {
+                  currentRef = refs.get(id);
+                  if (currentRef !== undefined) {
+                    currentRef.forEach((_, ownId) =>
+                      refreshList.set(ownId, normalizedCollection.get(ownId))
+                    );
                   }
                 }
               }
@@ -326,120 +299,56 @@ class Cruncher {
         }
 
         // Handle own Collection
-        const deleted: Map<Value, any> = new Map();
+        const deletedList: Map<string, any> = new Map();
         if (ownMutation) {
-          const added: Map<Value, any> = new Map();
-          const edited: Map<Value, any> = new Map();
+          const added: any[] = [];
           for (const [id, singleMutation] of ownMutation.mutations) {
-            toBeCheckedForChanges.delete(id);
+            refreshList.delete(id);
             if (singleMutation.deleted) {
-              const path = view.getPath(singleMutation.prev);
-              if (path) {
-                collectMutationsRecursively(
-                  deleted,
-                  path,
-                  singleMutation.prev,
-                  id
-                );
-              }
+              deletedList.set(id, singleMutation.prev);
             } else {
               const prevPath = view.getPath(singleMutation.prev);
               const updatedPath = view.getPath(singleMutation.updated);
               if (equal(prevPath, updatedPath)) {
                 if (prevPath) {
-                  collectMutationsRecursively(
-                    edited,
-                    prevPath,
-                    singleMutation.updated,
-                    id
-                  );
+                  refreshList.set(id, singleMutation.updated);
                 }
               } else {
                 if (prevPath) {
-                  collectMutationsRecursively(
-                    deleted,
-                    prevPath,
-                    singleMutation.prev,
-                    id
-                  );
+                  deletedList.set(id, singleMutation.prev);
                 }
                 if (updatedPath) {
-                  collectMutationsRecursively(
-                    added,
-                    updatedPath,
-                    view.joinAndTransform(singleMutation.updated),
-                    id
-                  );
+                  added.push(singleMutation.updated);
                 }
               }
             }
           }
 
-          for (const t of ownMutation.added) {
-            const path = view.getPath(t);
-            if (path) {
-              collectMutationsRecursively(
-                added,
-                path,
-                view.joinAndTransform(t),
-                t[ownIdProperty]
-              );
-            }
-          }
-          unwrapMutationsRecursively(
-            deleted,
-            view.properties.length,
-            [],
-            (valuesToTs, path) => {
-              deleteRecursivelyAll(view.data, path, valuesToTs, ownIdProperty);
-            }
-          );
-          unwrapMutationsRecursively(
-            edited,
-            view.properties.length,
-            [],
-            mutateIfChanged(view.joinAndTransform, view.data, ownIdProperty)
-          );
-          unwrapMutationsRecursively(
-            added,
-            view.properties.length,
-            [],
-            (valuesToTs, path) => {
-              addRecursivelyAll(
-                view.data,
-                path,
-                Array.from(valuesToTs.values())
-              );
-            }
-          );
+          view.deleteFromView(deletedList);
+          view.addToView(ownMutation.added, added);
         }
 
-        // Go through all items that might have changed
-        const mutatedTs: Map<Value, any> = new Map();
-        toBeCheckedForChanges.forEach((_, id) => {
-          const t = this.normalizedCollections.get(view.collection)!.get(id);
-          const path = view.getPath(t);
-          if (path) {
-            collectMutationsRecursively(mutatedTs, path, t, id);
-          }
-        });
-        unwrapMutationsRecursively(
-          mutatedTs,
-          view.properties.length,
-          [],
-          mutateIfChanged(view.joinAndTransform, view.data, ownIdProperty)
-        );
+        if (refreshList.size > 0) {
+          view.refresh(refreshList);
+        }
       }
     }
   }
 
   public view = (collection: string) => {
     return {
-      by: <K extends string[]>(...properties: K) => {
+      by: <K extends (string | ((item: any) => string | number | boolean))[]>(
+        ...properties: K
+      ) => {
         if (
           properties.indexOf(this.collections.get(collection)!.idProperty) > -1
         ) {
           throw new Error("An id cannot be a view property. Use byId instead.");
+        }
+        for (const property of properties) {
+          if (typeof property !== "function" && typeof property !== "string") {
+            throw new Error("A view property must be a string or a function.");
+          }
         }
         const options: ViewOptions = { collection, properties };
 
@@ -461,22 +370,9 @@ class Cruncher {
           return builder;
         };
 
-        const group = (
-          property: string,
-          groupingFunction: (valueOfProp: Value) => Value,
-          useGroupsAsParameter: boolean = true
-        ) => {
-          options.groupings = [
-            ...(options.groupings || []),
-            { property, groupingFunction, useGroupsAsParameter },
-          ];
-          return builder;
-        };
-
         const builder = {
           join,
           transform,
-          group,
           get,
         };
 
@@ -575,142 +471,6 @@ function deleteSingleReference(
   } else {
     refs.get(foreignRef)!.delete(ownId);
   }
-}
-
-function mutateIfChanged(
-  joinAndtransform,
-  data: Map<Value, any>,
-  ownIdProperty
-) {
-  return function (valuesToTs, path) {
-    const obj = getObjectAtLevel(data, path, 1);
-    let updated: number = 0;
-    function updateOrNot(item, updatedItem) {
-      if (equal(item, updatedItem)) {
-        return item;
-      } else {
-        updated++;
-        return updatedItem;
-      }
-    }
-    const updatedItems = obj
-      .get(path[path.length - 1])
-      .map((item) =>
-        valuesToTs.has(item[ownIdProperty])
-          ? updateOrNot(
-              item,
-              joinAndtransform(valuesToTs.get(item[ownIdProperty]))
-            )
-          : item
-      );
-    if (updated > 0) {
-      obj.set(path[path.length - 1], updatedItems);
-    }
-  };
-}
-
-function getObjectAtLevel(data: Map<Value, any>, path, targetLevel) {
-  if (path.length === targetLevel) {
-    return data;
-  }
-  return getObjectAtLevel(data.get(path[0]), path.slice(1), targetLevel);
-}
-
-function addRecursivelyAll(
-  data: Map<Value, any>,
-  path: string[],
-  value: any[]
-) {
-  if (path.length === 1) {
-    if (!data.has(path[0])) {
-      data.set(path[0], value);
-    } else {
-      data.set(path[0], [...data.get(path[0]), ...value]);
-    }
-    return;
-  }
-  if (!data.has(path[0])) {
-    data.set(path[0], new Map());
-  }
-  addRecursivelyAll(data.get(path[0]), path.slice(1), value);
-}
-
-function deleteRecursivelyAll(
-  data: Map<Value, any>,
-  path: string[],
-  values: Map<Value, any>,
-  idProperty
-) {
-  if (path.length === 1) {
-    if (!data.has(path[0])) {
-      console.error("Cannot find path to delete");
-    } else {
-      data.set(
-        path[0],
-        data.get(path[0]).filter((item) => !values.has(item[idProperty]))
-      );
-      if (data.get(path[0]).length === 0) {
-        data.delete(path[0]);
-        return true;
-      }
-    }
-    return false;
-  }
-  if (!data.has(path[0])) {
-    console.error("Cannot find path to delete");
-    return false;
-  }
-  if (
-    deleteRecursivelyAll(data.get(path[0]), path.slice(1), values, idProperty)
-  ) {
-    if (data.get(path[0]).size === 0) {
-      data.delete(path[0]);
-      return true;
-    }
-  }
-  return false;
-}
-
-function collectMutationsRecursively(
-  data: Map<Value, any>,
-  path: Value[],
-  value: any,
-  id: string
-) {
-  if (path.length === 1) {
-    if (!data.has(path[0])) {
-      const map = new Map();
-      map.set(id, value);
-      data.set(path[0], map);
-    } else {
-      data.get(path[0])!.set(id, value);
-    }
-    return;
-  }
-  if (!data.has(path[0])) {
-    data.set(path[0], new Map());
-  }
-  collectMutationsRecursively(data.get(path[0]), path.slice(1), value, id);
-}
-
-function unwrapMutationsRecursively(
-  changes,
-  level,
-  path,
-  callback: (valuesToTs, path) => any
-) {
-  if (level === 0) {
-    callback(changes, path);
-    return;
-  }
-  changes.forEach((_, key) => {
-    unwrapMutationsRecursively(
-      changes.get(key),
-      level - 1,
-      [...path, key],
-      callback
-    );
-  });
 }
 
 export default Cruncher;

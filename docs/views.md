@@ -43,6 +43,35 @@ It's ok if some of the properties of your view are optional. If any objects in t
 
 You cannot use an id as a property with the by method. If you want to query objects by id use [byId](./byId.md) instead.
 
+## Nested Properties and custom functions
+
+You can use nested (and deeply nested) properties and functions to create views. Use the dot notation like in the example below to indicate nested properties. The function you pass to the by method:
+
+- receives whole objects of your collection
+- has to return a string, number or boolean
+- has to be a pure function (always returns the same output for the same input)
+
+```js
+const cruncher = new Cruncher();
+cruncher.addCollection("students", "id", students);
+
+const studentsBySchoolAndGroup = cruncher
+  .view("students")
+  .by("school", (student) => (student.age > 21 ? "senior" : "junior"))
+  .get();
+
+const seniors = studentsBySchoolAndGroup("school1", "senior");
+
+const studentsByCityAndAge = cruncher
+  .view("students")
+  .by("address.city", "age")
+  .get();
+
+const newYorkers = studentsByCityAndAge("New York City", 20);
+```
+
+If the function you pass into the by method throws an error this error might be thrown when creating the view or performing updates.
+
 ## Joins
 
 If some of your collections reference other collections you can create joins.
@@ -168,51 +197,3 @@ const fullFilled = ordersByCustomerAndStatus("customer1", "FullFilled");
 Transformations will always feed the id into the resulting object, even if your transformation function returns an object without the id.
 
 If your transformation function throws an error this error might be thrown when creating the view or performing updates.
-
-## Groupings
-
-You can group the values for your properties. Hand in the name of the property you want to group and a grouping function that:
-
-- accepts the objects value for the property
-- is a pure function (always returns the same output for the same input)
-- returns a string, number or boolean
-
-```js
-const cruncher = new Cruncher();
-cruncher.addCollection("players", "id", players);
-
-const scoreToGroups = (score) => {
-  if (score <= 20) {
-    return "low";
-  }
-  if (score <= 50) {
-    return "mid-level";
-  }
-  return "high";
-};
-
-const playersByLeagueAndScoreGroup = cruncher
-  .view("players")
-  .by("league", "score")
-  .group("score", scoreToGroups)
-  .get();
-
-const midLevelRegionalPlayers = playersByLeagueAndScoreGroup(
-  "regional",
-  "mid-level"
-);
-```
-
-If you want to query your objects by the original value instead of the group value but still get grouped results pass in false as the third parameter of group:
-
-```js
-const playersByLeagueAndScoreGroup = cruncher
-  .view("players")
-  .by("league", "score")
-  .group("score", scoreToGroups, false)
-  .get();
-
-const midLevelRegionalPlayers = playersByLeagueAndScoreGroup("regional", 30);
-```
-
-If your grouping function throws an error this error might be thrown when creating the view or performing updates.
